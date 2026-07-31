@@ -1,0 +1,18 @@
+CREATE TABLE posts (
+    id INTEGER NOT NULL PRIMARY KEY,
+    userId INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL
+);
+
+selectAll:
+SELECT * FROM posts ORDER BY id;
+
+selectById:
+SELECT * FROM posts WHERE id = ?;
+
+insertOrReplace:
+INSERT OR REPLACE INTO posts(id, userId, title, body) VALUES (?, ?, ?, ?);
+
+deleteAll:
+DELETE FROM posts;
