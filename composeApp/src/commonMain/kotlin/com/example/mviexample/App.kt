@@ -1,12 +1,23 @@
 package com.example.mviexample
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import com.example.mviexample.features.posts.PostsScreen
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
+import com.example.mviexample.data.image.createImageHttpClient
+import com.example.mviexample.designsystem.theme.MviTheme
+import com.example.mviexample.features.posts.PostsApp
 
 @Composable
 fun App() {
-    MaterialTheme {
-        PostsScreen()
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components {
+                add(KtorNetworkFetcherFactory(httpClient = createImageHttpClient()))
+            }
+            .build()
+    }
+    MviTheme {
+        PostsApp()
     }
 }

@@ -8,6 +8,7 @@ kotlinx-coroutines = "1.9.0"
 kotlinx-serialization = "1.7.3"
 ktor = "3.0.3"
 sqldelight = "2.1.0"
+coil = "3.1.0"
 compileSdk = "35"
 minSdk = "24"
 targetSdk = "35"
@@ -26,6 +27,8 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -9,4 +9,19 @@ data class PostsResult(
 
 interface PostsRepository {
     suspend fun getPosts(forceRefresh: Boolean): PostsResult
+
+    suspend fun createPost(
+        title: String,
+        body: String,
+        imageUrl: String?,
+    ): Post
+
+    suspend fun updatePost(
+        id: Long,
+        title: String,
+        body: String,
+        imageUrl: String?,
+    ): Post
+
+    suspend fun deletePost(id: Long)
 }

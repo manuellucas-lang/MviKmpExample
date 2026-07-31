@@ -1,3 +1,4 @@
 TEAM_ID=
 BUNDLE_ID=com.example.mviexample
-APP_NAME=MVI Example
+APP_NAME=MviKmpExample
+OTHER_LDFLAGS=$(inherited) -lsqlite3

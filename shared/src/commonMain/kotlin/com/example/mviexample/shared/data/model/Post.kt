@@ -5,4 +5,7 @@ data class Post(
     val userId: Long,
     val title: String,
     val body: String,
+    val imageUrl: String? = null,
+    val authorName: String? = null,
+    val mine: Boolean = false,
 )

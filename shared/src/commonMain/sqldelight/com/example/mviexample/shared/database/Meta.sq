@@ -1,0 +1,10 @@
+CREATE TABLE meta (
+    key TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+upsert:
+INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?);
+
+selectById:
+SELECT * FROM meta WHERE key = ?;
