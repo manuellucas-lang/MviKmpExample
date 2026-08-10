@@ -5,7 +5,8 @@ CREATE TABLE posts (
     body TEXT NOT NULL,
     image_url TEXT,
     author_name TEXT,
-    is_mine INTEGER NOT NULL DEFAULT 0
+    is_mine INTEGER NOT NULL DEFAULT 0,
+    is_saved INTEGER NOT NULL DEFAULT 0
 );
 
 selectAll:
@@ -15,8 +16,11 @@ selectById:
 SELECT * FROM posts WHERE id = ?;
 
 insertOrReplace:
-INSERT OR REPLACE INTO posts(id, userId, title, body, image_url, author_name, is_mine)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO posts(id, userId, title, body, image_url, author_name, is_mine, is_saved)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+setSaved:
+UPDATE posts SET is_saved = ? WHERE id = ?;
 
 deleteById:
 DELETE FROM posts WHERE id = ?;

@@ -8,4 +8,5 @@ data class Post(
     val imageUrl: String? = null,
     val authorName: String? = null,
     val mine: Boolean = false,
+    val saved: Boolean = false,
 )

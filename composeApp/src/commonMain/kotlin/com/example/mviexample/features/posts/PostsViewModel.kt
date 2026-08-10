@@ -5,6 +5,7 @@ import com.example.mviexample.features.posts.PostsContract.PostsIntent
 import com.example.mviexample.features.posts.PostsContract.PostsState
 import com.example.mviexample.mvi.MviViewModel
 import com.example.mviexample.shared.data.PostsRepository
+import com.example.mviexample.shared.data.model.Post
 
 class PostsViewModel(
     private val repository: PostsRepository,
@@ -22,6 +23,7 @@ class PostsViewModel(
             is PostsIntent.RefreshPosts -> loadPosts(forceRefresh = true)
             is PostsIntent.UpdateQuery -> setState { it.copy(query = intent.query) }
             is PostsIntent.SelectFilter -> setState { it.copy(filter = intent.filter) }
+            is PostsIntent.SelectTab -> setState { it.copy(tab = intent.tab) }
             is PostsIntent.OpenCreate -> setState {
                 it.copy(isEditorOpen = true, editorPost = null)
             }
@@ -34,6 +36,7 @@ class PostsViewModel(
                 it.copy(isEditorOpen = false, editorPost = null, isSaving = false)
             }
             is PostsIntent.SavePost -> savePost(intent.title, intent.body, intent.imageUrl)
+            is PostsIntent.ToggleSavePost -> toggleSave(intent.post)
             is PostsIntent.RequestDelete -> setState { it.copy(deleteTarget = intent.post) }
             is PostsIntent.ConfirmDelete -> deleteCurrentTarget()
             is PostsIntent.DismissDelete -> setState { it.copy(deleteTarget = null) }
@@ -114,6 +117,30 @@ class PostsViewModel(
         } catch (e: Exception) {
             setState { it.copy(isSaving = false) }
             emitEffect(PostsEffect.ShowMessage("Save failed: ${e.message ?: "network error"}"))
+        }
+    }
+
+    private suspend fun toggleSave(post: Post) {
+        val newSaved = !post.saved
+        try {
+            repository.setPostSaved(post.id, newSaved)
+            setState { current ->
+                current.copy(
+                    posts = current.posts.map { if (it.id == post.id) it.copy(saved = newSaved) else it },
+                    selectedPost = if (current.selectedPost?.id == post.id) {
+                        current.selectedPost?.copy(saved = newSaved)
+                    } else {
+                        current.selectedPost
+                    },
+                )
+            }
+            emitEffect(
+                PostsEffect.ShowMessage(
+                    if (newSaved) "Post saved" else "Post removed from saved",
+                ),
+            )
+        } catch (e: Exception) {
+            emitEffect(PostsEffect.ShowMessage("Couldn't update saved post: ${e.message ?: "unknown error"}"))
         }
     }
 

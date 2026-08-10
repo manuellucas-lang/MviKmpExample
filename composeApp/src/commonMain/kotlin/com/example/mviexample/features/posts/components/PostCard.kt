@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -38,6 +40,7 @@ fun PostCard(
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    onToggleSave: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -115,6 +118,17 @@ fun PostCard(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(Modifier.weight(1f))
+                    Icon(
+                        imageVector = if (post.saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = if (post.saved) "Unsave post" else "Save post",
+                        tint = if (post.saved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .clickable(onClick = onToggleSave)
+                            .padding(10.dp)
+                            .size(18.dp),
+                    )
+                    Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit post",

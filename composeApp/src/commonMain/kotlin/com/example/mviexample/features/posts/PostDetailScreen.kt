@@ -18,6 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
@@ -80,6 +82,20 @@ fun PostDetailScreen(
                     contentColor = Color.White,
                 ) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+                AppIconButton(
+                    onClick = { actions.onToggleSave(post) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .windowInsetsPadding(WindowInsets.statusBars)
+                        .padding(8.dp),
+                    containerColor = postScrim,
+                    contentColor = Color.White,
+                ) {
+                    Icon(
+                        imageVector = if (post.saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = if (post.saved) "Unsave post" else "Save post",
+                    )
                 }
                 if (post.mine) {
                     BrandBadge(

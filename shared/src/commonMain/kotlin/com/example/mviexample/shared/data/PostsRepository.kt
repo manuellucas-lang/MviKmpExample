@@ -24,4 +24,6 @@ interface PostsRepository {
     ): Post
 
     suspend fun deletePost(id: Long)
+
+    suspend fun setPostSaved(id: Long, saved: Boolean)
 }
