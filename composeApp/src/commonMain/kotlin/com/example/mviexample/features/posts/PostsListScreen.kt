@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.AppButtonStyle
@@ -51,6 +52,7 @@ import com.example.mviexample.designsystem.components.EmptyState
 import com.example.mviexample.designsystem.components.ErrorState
 import com.example.mviexample.designsystem.components.FilterPill
 import com.example.mviexample.designsystem.components.PostCardSkeleton
+import com.example.mviexample.designsystem.components.ThemeToggleButton
 import com.example.mviexample.designsystem.theme.BrandGradientEnd
 import com.example.mviexample.designsystem.theme.BrandGradientStart
 import com.example.mviexample.features.posts.components.PostCard
@@ -61,6 +63,8 @@ fun PostsListScreen(
     state: PostsContract.PostsState,
     actions: PostsActions,
     snackbarHostState: SnackbarHostState,
+    darkTheme: Boolean = false,
+    onToggleTheme: () -> Unit = {},
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -76,13 +80,20 @@ fun PostsListScreen(
                         animationSpec = infiniteRepeatable(tween(700)),
                         label = "refreshAngle",
                     )
-                    IconButton(onClick = actions.onRefresh, enabled = !state.isRefreshing) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.rotateIf(state.isRefreshing, rotation),
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        ThemeToggleButton(
+                            darkTheme = darkTheme,
+                            onClick = onToggleTheme,
+                            contentColor = MaterialTheme.colorScheme.onBackground,
                         )
+                        IconButton(onClick = actions.onRefresh, enabled = !state.isRefreshing) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh",
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.rotateIf(state.isRefreshing, rotation),
+                            )
+                        }
                     }
                 },
             )
@@ -246,19 +257,19 @@ private fun InsightsHero(
         Text(
             text = "INSIGHTS",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+            color = Color.White.copy(alpha = 0.7f),
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = "$total posts",
             style = MaterialTheme.typography.displayMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = Color.White,
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = "$withPhotos with photos · $mine created by you",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
+            color = Color.White.copy(alpha = 0.85f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

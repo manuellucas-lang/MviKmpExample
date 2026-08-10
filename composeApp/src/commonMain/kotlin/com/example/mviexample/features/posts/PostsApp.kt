@@ -49,6 +49,8 @@ data class PostsActions(
 
 @Composable
 fun PostsApp(
+    darkTheme: Boolean = false,
+    onToggleTheme: () -> Unit = {},
     viewModel: PostsViewModel = viewModel { PostsViewModel(AppGraph.container.postsRepository) },
 ) {
     val state by viewModel.state.collectAsState()
@@ -111,6 +113,8 @@ fun PostsApp(
                 state = state,
                 actions = actions,
                 snackbarHostState = snackbarHostState,
+                darkTheme = darkTheme,
+                onToggleTheme = onToggleTheme,
             )
 
             AppScreen.Detail -> PostDetailScreen(

@@ -13,6 +13,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -137,5 +141,24 @@ fun AppIconButton(
         ),
     ) {
         icon()
+    }
+}
+
+@Composable
+fun ThemeToggleButton(
+    darkTheme: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+) {
+    AppIconButton(
+        onClick = onClick,
+        modifier = modifier,
+        contentColor = contentColor,
+    ) {
+        Icon(
+            imageVector = if (darkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+            contentDescription = if (darkTheme) "Switch to light theme" else "Switch to dark theme",
+        )
     }
 }
