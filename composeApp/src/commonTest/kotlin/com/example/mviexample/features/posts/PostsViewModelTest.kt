@@ -42,7 +42,8 @@ class PostsViewModelTest {
     private fun createViewModel(
         result: PostsResult = PostsResult(emptyList(), fromCache = false),
         onCreate: (Post) -> Post = { it },
-    ) = PostsViewModel(FakePostsRepository(result, onCreate))
+        onSetSaved: ((Long, Boolean) -> Unit)? = null,
+    ) = PostsViewModel(FakePostsRepository(result, onCreate, onSetSaved))
 
     @Test
     fun initialState_usesDefaults() {
@@ -198,11 +199,84 @@ class PostsViewModelTest {
         assertEquals(listOf(samplePost), viewModel.state.value.posts)
         assertNull(viewModel.state.value.deleteTarget)
     }
+
+    @Test
+    fun toggleSave_marksPostAsSavedAndPersists() = runTest(dispatcher) {
+        var persistedId: Long? = null
+        var persistedSaved: Boolean? = null
+        val viewModel = createViewModel(
+            result = PostsResult(listOf(samplePost), fromCache = false),
+            onSetSaved = { id, saved ->
+                persistedId = id
+                persistedSaved = saved
+            },
+        )
+
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.ToggleSavePost(samplePost))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.posts.first().saved)
+        assertEquals(samplePost.id, persistedId)
+        assertEquals(true, persistedSaved)
+        assertTrue(viewModel.effects.first() is PostsContract.PostsEffect.ShowMessage)
+    }
+
+    @Test
+    fun toggleSave_unsavesPost() = runTest(dispatcher) {
+        val savedPost = samplePost.copy(saved = true)
+        val viewModel = createViewModel(PostsResult(listOf(savedPost), fromCache = false))
+
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.ToggleSavePost(savedPost))
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.posts.first().saved)
+    }
+
+    @Test
+    fun toggleSave_updatesSelectedPost() = runTest(dispatcher) {
+        val viewModel = createViewModel(PostsResult(listOf(samplePost), fromCache = false))
+
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.OpenDetail(samplePost))
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.ToggleSavePost(samplePost))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.selectedPost?.saved == true)
+    }
+
+    @Test
+    fun selectTab_saved_showsOnlySavedPosts() = runTest(dispatcher) {
+        val remote = Post(1, 1, "Remote", "Content", authorName = "Leanne", saved = true)
+        val other = Post(2, 1, "Other", "Content", authorName = "Leanne")
+        val viewModel = createViewModel(PostsResult(listOf(remote, other), fromCache = false))
+
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.SelectTab(PostsContract.PostsTab.Saved))
+        advanceUntilIdle()
+
+        assertEquals(listOf(remote), viewModel.state.value.visiblePosts)
+    }
+
+    @Test
+    fun toggleSave_failure_keepsStateAndEmitsMessage() = runTest(dispatcher) {
+        val viewModel = PostsViewModel(FailingPostsRepository())
+
+        advanceUntilIdle()
+        viewModel.onIntent(PostsIntent.ToggleSavePost(samplePost))
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.posts.any { it.saved })
+        assertTrue(viewModel.effects.first() is PostsContract.PostsEffect.ShowMessage)
+    }
 }
 
 private class FakePostsRepository(
     private val result: PostsResult,
     private val onCreate: (Post) -> Post = { it },
+    private val onSetSaved: ((Long, Boolean) -> Unit)? = null,
 ) : PostsRepository {
     override suspend fun getPosts(forceRefresh: Boolean): PostsResult = result
 
@@ -223,6 +297,10 @@ private class FakePostsRepository(
         Post(id = id, userId = 1, title = title, body = body, imageUrl = imageUrl, authorName = "You", mine = true)
 
     override suspend fun deletePost(id: Long) = Unit
+
+    override suspend fun setPostSaved(id: Long, saved: Boolean) {
+        onSetSaved?.invoke(id, saved)
+    }
 }
 
 private class FailingPostsRepository : PostsRepository {
@@ -236,5 +314,8 @@ private class FailingPostsRepository : PostsRepository {
         throw RuntimeException("network down")
 
     override suspend fun deletePost(id: Long) =
+        throw RuntimeException("network down")
+
+    override suspend fun setPostSaved(id: Long, saved: Boolean) =
         throw RuntimeException("network down")
 }

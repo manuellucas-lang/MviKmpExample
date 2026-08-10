@@ -80,7 +80,12 @@ class PostsRepositoryImpl(
         queries.deleteById(id)
     }
 
+    override suspend fun setPostSaved(id: Long, saved: Boolean) {
+        queries.setSaved(is_saved = if (saved) 1L else 0L, id = id)
+    }
+
     private fun Post.upsert() {
+        val existing = queries.selectById(id).executeAsOneOrNull()
         queries.insertOrReplace(
             id = id,
             userId = userId,
@@ -89,6 +94,7 @@ class PostsRepositoryImpl(
             image_url = imageUrl,
             author_name = authorName,
             is_mine = if (mine) 1L else 0L,
+            is_saved = existing?.is_saved ?: if (saved) 1L else 0L,
         )
     }
 }
@@ -107,6 +113,7 @@ private fun Posts.toModel() =
         imageUrl = image_url,
         authorName = author_name,
         mine = is_mine == 1L,
+        saved = is_saved == 1L,
     )
 
 private fun PostDto.toModel() =

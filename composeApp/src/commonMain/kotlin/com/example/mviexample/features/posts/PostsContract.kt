@@ -10,12 +10,18 @@ object PostsContract : MviContract {
         Mine,
     }
 
+    enum class PostsTab {
+        List,
+        Saved,
+    }
+
     data class PostsState(
         val isLoading: Boolean = false,
         val isRefreshing: Boolean = false,
         val posts: List<Post> = emptyList(),
         val query: String = "",
         val filter: PostFilter = PostFilter.All,
+        val tab: PostsTab = PostsTab.List,
         val selectedPost: Post? = null,
         val editorPost: Post? = null,
         val isEditorOpen: Boolean = false,
@@ -25,11 +31,18 @@ object PostsContract : MviContract {
         val error: String? = null,
     ) : MviContract.UiState {
 
+        val savedCount: Int
+            get() = posts.count { it.saved }
+
         val visiblePosts: List<Post>
             get() = posts.filter(::matches).filter { post ->
-                when (filter) {
-                    PostFilter.All -> true
-                    PostFilter.Mine -> post.mine
+                when (tab) {
+                    PostsTab.List -> when (filter) {
+                        PostFilter.All -> true
+                        PostFilter.Mine -> post.mine
+                    }
+
+                    PostsTab.Saved -> post.saved
                 }
             }
 
@@ -47,12 +60,14 @@ object PostsContract : MviContract {
         data object RefreshPosts : PostsIntent
         data class UpdateQuery(val query: String) : PostsIntent
         data class SelectFilter(val filter: PostFilter) : PostsIntent
+        data class SelectTab(val tab: PostsTab) : PostsIntent
         data object OpenCreate : PostsIntent
         data class OpenDetail(val post: Post) : PostsIntent
         data object CloseDetail : PostsIntent
         data class OpenEdit(val post: Post) : PostsIntent
         data object CloseEditor : PostsIntent
         data class SavePost(val title: String, val body: String, val imageUrl: String?) : PostsIntent
+        data class ToggleSavePost(val post: Post) : PostsIntent
         data class RequestDelete(val post: Post) : PostsIntent
         data object ConfirmDelete : PostsIntent
         data object DismissDelete : PostsIntent
