@@ -1,6 +1,10 @@
 package com.example.mviexample
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
@@ -17,7 +21,11 @@ fun App() {
             }
             .build()
     }
-    MviTheme {
-        PostsApp()
+    var darkTheme by rememberSaveable { mutableStateOf(true) }
+    MviTheme(darkTheme = darkTheme) {
+        PostsApp(
+            darkTheme = darkTheme,
+            onToggleTheme = { darkTheme = !darkTheme },
+        )
     }
 }
