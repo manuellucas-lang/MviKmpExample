@@ -1,4 +1,4 @@
-package com.example.mviexample.features.posts
+package com.example.mviexample.features.operaciones
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,12 +44,12 @@ import com.example.mviexample.designsystem.components.InitialsAvatar
 import com.example.mviexample.designsystem.components.PostImage
 
 @Composable
-fun PostDetailScreen(
-    state: PostsContract.PostsState,
-    actions: PostsActions,
+fun OperacionDetailScreen(
+    state: OperacionesContract.OperacionesState,
+    actions: OperacionesActions,
     snackbarHostState: SnackbarHostState,
 ) {
-    val post = state.selectedPost ?: return
+    val operacion = state.selectedOperacion ?: return
     val postScrim = Color.Black.copy(alpha = 0.35f)
 
     Scaffold(
@@ -68,7 +68,7 @@ fun PostDetailScreen(
                     .height(280.dp),
             ) {
                 PostImage(
-                    url = post.imageUrl,
+                    url = operacion.imagenUrl,
                     modifier = Modifier.fillMaxSize(),
                     overlayGradient = true,
                 )
@@ -81,10 +81,10 @@ fun PostDetailScreen(
                     containerColor = postScrim,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                 }
                 AppIconButton(
-                    onClick = { actions.onToggleSave(post) },
+                    onClick = { actions.onToggleSave(operacion) },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .windowInsetsPadding(WindowInsets.statusBars)
@@ -93,13 +93,13 @@ fun PostDetailScreen(
                     contentColor = Color.White,
                 ) {
                     Icon(
-                        imageVector = if (post.saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = if (post.saved) "Unsave post" else "Save post",
+                        imageVector = if (operacion.guardada) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = if (operacion.guardada) "Quitar de guardadas" else "Guardar operación",
                     )
                 }
-                if (post.mine) {
+                if (operacion.propia) {
                     BrandBadge(
-                        text = "Yours",
+                        text = "Tuya",
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(20.dp),
@@ -116,30 +116,39 @@ fun PostDetailScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             ) {
                 Text(
-                    text = "POST #${post.id}",
+                    text = "OPERACIÓN #${operacion.id}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    text = post.title,
+                    text = operacion.titulo,
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
+                val tipo = operacion.tipo
+                if (tipo != null) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = tipo,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
                 Spacer(Modifier.height(20.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    InitialsAvatar(name = post.authorName, size = 44.dp)
+                    InitialsAvatar(name = operacion.autor, size = 44.dp)
                     Spacer(Modifier.size(12.dp))
                     Column {
                         Text(
-                            text = post.authorName ?: "Anonymous",
+                            text = operacion.autor ?: "Anónimo",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            text = "Author",
+                            text = "Autor",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -149,7 +158,7 @@ fun PostDetailScreen(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    text = post.body,
+                    text = operacion.descripcion,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.92f),
                 )
@@ -167,8 +176,8 @@ fun PostDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     AppButton(
-                        text = "Edit",
-                        onClick = { actions.onOpenEdit(post) },
+                        text = "Editar",
+                        onClick = { actions.onOpenEdit(operacion) },
                         style = AppButtonStyle.Outlined,
                         modifier = Modifier.weight(1f),
                         leadingIcon = {
@@ -180,8 +189,8 @@ fun PostDetailScreen(
                         },
                     )
                     AppButton(
-                        text = "Delete",
-                        onClick = { actions.onRequestDelete(post) },
+                        text = "Eliminar",
+                        onClick = { actions.onRequestDelete(operacion) },
                         style = AppButtonStyle.Error,
                         modifier = Modifier.weight(1f),
                         leadingIcon = {

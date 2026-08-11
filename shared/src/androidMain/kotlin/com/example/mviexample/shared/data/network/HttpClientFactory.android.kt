@@ -17,3 +17,5 @@ actual fun createHttpClient(): HttpClient =
             connectTimeoutMillis = 10_000
         }
     }
+
+actual fun apiBaseUrl(): String = "http://10.0.2.2:8080"

@@ -1,0 +1,29 @@
+CREATE TABLE operaciones (
+    id INTEGER NOT NULL PRIMARY KEY,
+    titulo TEXT NOT NULL,
+    descripcion TEXT NOT NULL,
+    imagen_url TEXT,
+    tipo TEXT,
+    autor TEXT,
+    propia INTEGER NOT NULL DEFAULT 0,
+    guardada INTEGER NOT NULL DEFAULT 0
+);
+
+selectAll:
+SELECT * FROM operaciones ORDER BY id DESC;
+
+selectById:
+SELECT * FROM operaciones WHERE id = ?;
+
+insertOrReplace:
+INSERT OR REPLACE INTO operaciones(id, titulo, descripcion, imagen_url, tipo, autor, propia, guardada)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+setGuardada:
+UPDATE operaciones SET guardada = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM operaciones WHERE id = ?;
+
+deleteAll:
+DELETE FROM operaciones;

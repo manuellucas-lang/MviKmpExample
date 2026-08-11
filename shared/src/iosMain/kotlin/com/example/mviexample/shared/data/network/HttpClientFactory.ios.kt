@@ -17,3 +17,5 @@ actual fun createHttpClient(): HttpClient =
             connectTimeoutMillis = 10_000
         }
     }
+
+actual fun apiBaseUrl(): String = "http://localhost:8080"
