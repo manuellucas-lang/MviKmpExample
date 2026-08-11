@@ -1,4 +1,4 @@
-package com.example.mviexample.features.posts
+package com.example.mviexample.features.operaciones
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -16,10 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mviexample.designsystem.components.ConfirmDialog
-import com.example.mviexample.features.posts.PostsContract.PostsEffect
-import com.example.mviexample.features.posts.PostsContract.PostsIntent
-import com.example.mviexample.features.posts.PostsContract.PostsState
+import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesEffect
+import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesIntent
+import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesState
 import com.example.mviexample.shared.AppGraph
+import com.example.mviexample.shared.data.model.Operacion
 
 private sealed interface AppScreen {
     data object List : AppScreen
@@ -27,33 +28,33 @@ private sealed interface AppScreen {
     data object Editor : AppScreen
 }
 
-private fun currentScreen(state: PostsState): AppScreen = when {
+private fun currentScreen(state: OperacionesState): AppScreen = when {
     state.isEditorOpen -> AppScreen.Editor
-    state.selectedPost != null -> AppScreen.Detail
+    state.selectedOperacion != null -> AppScreen.Detail
     else -> AppScreen.List
 }
 
-data class PostsActions(
+data class OperacionesActions(
     val onRefresh: () -> Unit = {},
     val onQueryChange: (String) -> Unit = {},
-    val onFilterChange: (PostsContract.PostFilter) -> Unit = {},
-    val onTabChange: (PostsContract.PostsTab) -> Unit = {},
+    val onFilterChange: (OperacionesContract.OperacionFiltro) -> Unit = {},
+    val onTabChange: (OperacionesContract.OperacionesTab) -> Unit = {},
     val onOpenCreate: () -> Unit = {},
-    val onOpenDetail: (com.example.mviexample.shared.data.model.Post) -> Unit = {},
+    val onOpenDetail: (Operacion) -> Unit = {},
     val onRetry: () -> Unit = {},
-    val onRequestDelete: (com.example.mviexample.shared.data.model.Post) -> Unit = {},
-    val onOpenEdit: (com.example.mviexample.shared.data.model.Post) -> Unit = {},
-    val onToggleSave: (com.example.mviexample.shared.data.model.Post) -> Unit = {},
+    val onRequestDelete: (Operacion) -> Unit = {},
+    val onOpenEdit: (Operacion) -> Unit = {},
+    val onToggleSave: (Operacion) -> Unit = {},
     val onCloseDetail: () -> Unit = {},
     val onCloseEditor: () -> Unit = {},
     val onSave: (String, String, String?) -> Unit = { _, _, _ -> },
 )
 
 @Composable
-fun PostsApp(
+fun OperacionesApp(
     darkTheme: Boolean = false,
     onToggleTheme: () -> Unit = {},
-    viewModel: PostsViewModel = viewModel { PostsViewModel(AppGraph.container.postsRepository) },
+    viewModel: OperacionesViewModel = viewModel { OperacionesViewModel(AppGraph.container.operacionesRepository) },
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -61,38 +62,38 @@ fun PostsApp(
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is PostsEffect.ShowMessage -> snackbarHostState.showSnackbar(effect.message)
+                is OperacionesEffect.MostrarMensaje -> snackbarHostState.showSnackbar(effect.mensaje)
             }
         }
     }
 
-    val actions = PostsActions(
-        onRefresh = { viewModel.onIntent(PostsIntent.RefreshPosts) },
-        onQueryChange = { viewModel.onIntent(PostsIntent.UpdateQuery(it)) },
-        onFilterChange = { viewModel.onIntent(PostsIntent.SelectFilter(it)) },
-        onTabChange = { viewModel.onIntent(PostsIntent.SelectTab(it)) },
-        onOpenCreate = { viewModel.onIntent(PostsIntent.OpenCreate) },
-        onOpenDetail = { viewModel.onIntent(PostsIntent.OpenDetail(it)) },
-        onRetry = { viewModel.onIntent(PostsIntent.Retry) },
-        onRequestDelete = { viewModel.onIntent(PostsIntent.RequestDelete(it)) },
-        onOpenEdit = { viewModel.onIntent(PostsIntent.OpenEdit(it)) },
-        onToggleSave = { viewModel.onIntent(PostsIntent.ToggleSavePost(it)) },
-        onCloseDetail = { viewModel.onIntent(PostsIntent.CloseDetail) },
-        onCloseEditor = { viewModel.onIntent(PostsIntent.CloseEditor) },
-        onSave = { title, body, imageUrl ->
-            viewModel.onIntent(PostsIntent.SavePost(title, body, imageUrl))
+    val actions = OperacionesActions(
+        onRefresh = { viewModel.onIntent(OperacionesIntent.RefrescarOperaciones) },
+        onQueryChange = { viewModel.onIntent(OperacionesIntent.ActualizarQuery(it)) },
+        onFilterChange = { viewModel.onIntent(OperacionesIntent.SeleccionarFiltro(it)) },
+        onTabChange = { viewModel.onIntent(OperacionesIntent.SeleccionarTab(it)) },
+        onOpenCreate = { viewModel.onIntent(OperacionesIntent.AbrirCrear) },
+        onOpenDetail = { viewModel.onIntent(OperacionesIntent.AbrirDetalle(it)) },
+        onRetry = { viewModel.onIntent(OperacionesIntent.Reintentar) },
+        onRequestDelete = { viewModel.onIntent(OperacionesIntent.SolicitarBorrado(it)) },
+        onOpenEdit = { viewModel.onIntent(OperacionesIntent.AbrirEditar(it)) },
+        onToggleSave = { viewModel.onIntent(OperacionesIntent.ToggleGuardar(it)) },
+        onCloseDetail = { viewModel.onIntent(OperacionesIntent.CerrarDetalle) },
+        onCloseEditor = { viewModel.onIntent(OperacionesIntent.CerrarEditor) },
+        onSave = { titulo, descripcion, imagenUrl ->
+            viewModel.onIntent(OperacionesIntent.GuardarOperacion(titulo, descripcion, imagenUrl))
         },
     )
 
     state.deleteTarget?.let { target ->
         ConfirmDialog(
-            title = "Delete post?",
-            message = "\u201C${target.title.take(60)}${if (target.title.length > 60) "…" else ""}\u201D will be permanently removed.",
-            confirmLabel = "Delete",
-            dismissLabel = "Cancel",
+            title = "¿Eliminar operación?",
+            message = "“${target.titulo.take(60)}${if (target.titulo.length > 60) "…" else ""}” se eliminará permanentemente.",
+            confirmLabel = "Eliminar",
+            dismissLabel = "Cancelar",
             destructive = true,
-            onConfirm = { viewModel.onIntent(PostsIntent.ConfirmDelete) },
-            onDismiss = { viewModel.onIntent(PostsIntent.DismissDelete) },
+            onConfirm = { viewModel.onIntent(OperacionesIntent.ConfirmarBorrado) },
+            onDismiss = { viewModel.onIntent(OperacionesIntent.DescartarBorrado) },
         )
     }
 
@@ -113,7 +114,7 @@ fun PostsApp(
         label = "screenTransition",
     ) { screen ->
         when (screen) {
-            AppScreen.List -> PostsListScreen(
+            AppScreen.List -> OperacionesListScreen(
                 state = state,
                 actions = actions,
                 snackbarHostState = snackbarHostState,
@@ -121,13 +122,13 @@ fun PostsApp(
                 onToggleTheme = onToggleTheme,
             )
 
-            AppScreen.Detail -> PostDetailScreen(
+            AppScreen.Detail -> OperacionDetailScreen(
                 state = state,
                 actions = actions,
                 snackbarHostState = snackbarHostState,
             )
 
-            AppScreen.Editor -> PostEditorScreen(
+            AppScreen.Editor -> OperacionEditorScreen(
                 state = state,
                 actions = actions,
                 snackbarHostState = snackbarHostState,

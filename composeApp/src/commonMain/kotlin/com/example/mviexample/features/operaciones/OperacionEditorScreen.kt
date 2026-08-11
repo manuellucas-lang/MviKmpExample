@@ -1,4 +1,4 @@
-package com.example.mviexample.features.posts
+package com.example.mviexample.features.operaciones
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,41 +29,40 @@ import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.AppButton
 import com.example.mviexample.designsystem.components.AppTextField
 import com.example.mviexample.designsystem.components.BrandTopBar
-import com.example.mviexample.features.posts.components.PostCard
-import com.example.mviexample.shared.data.model.Post
+import com.example.mviexample.features.operaciones.components.OperacionCard
+import com.example.mviexample.shared.data.model.Operacion
 
 @Composable
-fun PostEditorScreen(
-    state: PostsContract.PostsState,
-    actions: PostsActions,
+fun OperacionEditorScreen(
+    state: OperacionesContract.OperacionesState,
+    actions: OperacionesActions,
     snackbarHostState: SnackbarHostState,
 ) {
-    val editing = state.editorPost
+    val editing = state.editorOperacion
 
-    var title by rememberSaveable(editing?.id) { mutableStateOf(editing?.title ?: "") }
-    var body by rememberSaveable(editing?.id) { mutableStateOf(editing?.body ?: "") }
-    var imageUrl by rememberSaveable(editing?.id) { mutableStateOf(editing?.imageUrl ?: "") }
+    var titulo by rememberSaveable(editing?.id) { mutableStateOf(editing?.titulo ?: "") }
+    var descripcion by rememberSaveable(editing?.id) { mutableStateOf(editing?.descripcion ?: "") }
+    var imagenUrl by rememberSaveable(editing?.id) { mutableStateOf(editing?.imagenUrl ?: "") }
 
-    val previewPost = editing?.copy(
-        title = title.ifBlank { editing.title },
-        body = body.ifBlank { editing.body },
-        imageUrl = imageUrl.ifBlank { null },
-    ) ?: Post(
+    val previewOperacion = editing?.copy(
+        titulo = titulo.ifBlank { editing.titulo },
+        descripcion = descripcion.ifBlank { editing.descripcion },
+        imagenUrl = imagenUrl.ifBlank { null },
+    ) ?: Operacion(
         id = 0,
-        userId = 1,
-        title = title.ifBlank { "Post title" },
-        body = body.ifBlank { "Your content preview will appear here." },
-        imageUrl = imageUrl.ifBlank { null },
-        authorName = "You",
-        mine = true,
+        titulo = titulo.ifBlank { "Título de la operación" },
+        descripcion = descripcion.ifBlank { "Aquí aparecerá la vista previa de tu contenido." },
+        imagenUrl = imagenUrl.ifBlank { null },
+        autor = "You",
+        propia = true,
     )
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             BrandTopBar(
-                title = if (editing != null) "Edit post" else "New post",
-                subtitle = if (editing != null) "Update your insight" else "Share with your team",
+                title = if (editing != null) "Editar operación" else "Nueva operación",
+                subtitle = if (editing != null) "Actualiza los datos" else "Registra una nueva operación",
                 onBack = actions.onCloseEditor,
             )
         },
@@ -81,56 +80,56 @@ fun PostEditorScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             ) {
                 Text(
-                    text = "CONTENT",
+                    text = "CONTENIDO",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
                 Spacer(Modifier.height(10.dp))
                 AppTextField(
-                    value = title,
-                    onValueChange = { title = it },
+                    value = titulo,
+                    onValueChange = { titulo = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Title",
+                    label = "Título",
                     singleLine = false,
                     minLines = 2,
                     maxLines = 3,
-                    supportingText = "Give your insight a clear headline",
+                    supportingText = "Da a tu operación un título claro",
                 )
                 Spacer(Modifier.height(18.dp))
                 AppTextField(
-                    value = body,
-                    onValueChange = { body = it },
+                    value = descripcion,
+                    onValueChange = { descripcion = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Content",
+                    label = "Contenido",
                     singleLine = false,
                     minLines = 6,
                     maxLines = 12,
-                    supportingText = "At least 3 characters",
+                    supportingText = "Al menos 3 caracteres",
                 )
                 Spacer(Modifier.height(18.dp))
                 Text(
-                    text = "PHOTO",
+                    text = "FOTO",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
                 Spacer(Modifier.height(10.dp))
                 AppTextField(
-                    value = imageUrl,
-                    onValueChange = { imageUrl = it },
+                    value = imagenUrl,
+                    onValueChange = { imagenUrl = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Image URL (optional)",
+                    label = "URL de imagen (opcional)",
                     placeholder = "https://…",
-                    supportingText = "Paste a link to attach an image to your post",
+                    supportingText = "Pega un enlace para adjuntar una imagen a tu operación",
                 )
                 Spacer(Modifier.height(28.dp))
                 Text(
-                    text = "PREVIEW",
+                    text = "VISTA PREVIA",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
                 Spacer(Modifier.height(10.dp))
-                PostCard(
-                    post = previewPost,
+                OperacionCard(
+                    operacion = previewOperacion,
                     onClick = {},
                     onEdit = {},
                     onDelete = {},
@@ -149,9 +148,9 @@ fun PostEditorScreen(
                         .padding(horizontal = 20.dp, vertical = 14.dp),
                 ) {
                     AppButton(
-                        text = if (editing != null) "Save changes" else "Publish post",
+                        text = if (editing != null) "Guardar cambios" else "Registrar operación",
                         onClick = {
-                            actions.onSave(title, body, imageUrl.ifBlank { null })
+                            actions.onSave(titulo, descripcion, imagenUrl.ifBlank { null })
                         },
                         isLoading = state.isSaving,
                         modifier = Modifier.fillMaxWidth(),

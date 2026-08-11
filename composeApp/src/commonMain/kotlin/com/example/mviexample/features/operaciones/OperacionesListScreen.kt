@@ -1,4 +1,4 @@
-package com.example.mviexample.features.posts
+package com.example.mviexample.features.operaciones
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.mviexample.designsystem.components.AppButtonStyle
 import com.example.mviexample.designsystem.components.AppTextField
 import com.example.mviexample.designsystem.components.BrandHeader
 import com.example.mviexample.designsystem.components.EmptyState
@@ -60,13 +59,12 @@ import com.example.mviexample.designsystem.components.PostCardSkeleton
 import com.example.mviexample.designsystem.components.ThemeToggleButton
 import com.example.mviexample.designsystem.theme.BrandGradientEnd
 import com.example.mviexample.designsystem.theme.BrandGradientStart
-import com.example.mviexample.features.posts.components.PostCard
-import com.example.mviexample.shared.data.model.Post
+import com.example.mviexample.features.operaciones.components.OperacionCard
 
 @Composable
-fun PostsListScreen(
-    state: PostsContract.PostsState,
-    actions: PostsActions,
+fun OperacionesListScreen(
+    state: OperacionesContract.OperacionesState,
+    actions: OperacionesActions,
     snackbarHostState: SnackbarHostState,
     darkTheme: Boolean = false,
     onToggleTheme: () -> Unit = {},
@@ -75,11 +73,11 @@ fun PostsListScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             BrandHeader(
-                title = if (state.tab == PostsContract.PostsTab.Saved) "Saved" else "Discover",
-                subtitle = if (state.tab == PostsContract.PostsTab.Saved) {
-                    "${state.savedCount} saved insights"
+                title = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) "Guardadas" else "Operaciones",
+                subtitle = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
+                    "${state.guardadasCount} operaciones guardadas"
                 } else {
-                    "${state.posts.size} insights · ${state.posts.count { it.mine }} yours"
+                    "${state.operaciones.size} operaciones · ${state.operaciones.count { it.propia }} tuyas"
                 },
                 action = {
                     val infinite = rememberInfiniteTransition(label = "refreshSpin")
@@ -98,7 +96,7 @@ fun PostsListScreen(
                         IconButton(onClick = actions.onRefresh, enabled = !state.isRefreshing) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refresh",
+                                contentDescription = "Refrescar",
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.rotateIf(state.isRefreshing, rotation),
                             )
@@ -111,17 +109,17 @@ fun PostsListScreen(
         bottomBar = {
             NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                 NavigationBarItem(
-                    selected = state.tab == PostsContract.PostsTab.List,
-                    onClick = { actions.onTabChange(PostsContract.PostsTab.List) },
+                    selected = state.tab == OperacionesContract.OperacionesTab.Lista,
+                    onClick = { actions.onTabChange(OperacionesContract.OperacionesTab.Lista) },
                     icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                    label = { Text("List") },
+                    label = { Text("Lista") },
                 )
                 NavigationBarItem(
-                    selected = state.tab == PostsContract.PostsTab.Saved,
-                    onClick = { actions.onTabChange(PostsContract.PostsTab.Saved) },
+                    selected = state.tab == OperacionesContract.OperacionesTab.Guardadas,
+                    onClick = { actions.onTabChange(OperacionesContract.OperacionesTab.Guardadas) },
                     icon = {
                         Icon(
-                            imageVector = if (state.tab == PostsContract.PostsTab.Saved) {
+                            imageVector = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
                                 Icons.Filled.Bookmark
                             } else {
                                 Icons.Filled.BookmarkBorder
@@ -129,16 +127,16 @@ fun PostsListScreen(
                             contentDescription = null,
                         )
                     },
-                    label = { Text("Saved") },
+                    label = { Text("Guardadas") },
                 )
             }
         },
         floatingActionButton = {
-            if (state.tab == PostsContract.PostsTab.List) {
+            if (state.tab == OperacionesContract.OperacionesTab.Lista) {
                 ExtendedFloatingActionButton(
                     onClick = actions.onOpenCreate,
                     icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                    text = { Text("New post") },
+                    text = { Text("Nueva operación") },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(16.dp),
@@ -159,14 +157,14 @@ fun PostsListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                placeholder = "Search posts or authors…",
+                placeholder = "Buscar operaciones o autores…",
                 leadingIcon = Icons.Default.Search,
                 trailingIcon = if (state.query.isNotEmpty()) {
                     {
                         IconButton(onClick = { actions.onQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Clear search",
+                                contentDescription = "Limpiar búsqueda",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -178,7 +176,7 @@ fun PostsListScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            if (state.tab == PostsContract.PostsTab.List) {
+            if (state.tab == OperacionesContract.OperacionesTab.Lista) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -186,16 +184,16 @@ fun PostsListScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     FilterPill(
-                        text = "All",
-                        count = state.posts.size,
-                        selected = state.filter == PostsContract.PostFilter.All,
-                        onClick = { actions.onFilterChange(PostsContract.PostFilter.All) },
+                        text = "Todas",
+                        count = state.operaciones.size,
+                        selected = state.filtro == OperacionesContract.OperacionFiltro.Todas,
+                        onClick = { actions.onFilterChange(OperacionesContract.OperacionFiltro.Todas) },
                     )
                     FilterPill(
-                        text = "Mine",
-                        count = state.posts.count { it.mine },
-                        selected = state.filter == PostsContract.PostFilter.Mine,
-                        onClick = { actions.onFilterChange(PostsContract.PostFilter.Mine) },
+                        text = "Propias",
+                        count = state.operaciones.count { it.propia },
+                        selected = state.filtro == OperacionesContract.OperacionFiltro.Propias,
+                        onClick = { actions.onFilterChange(OperacionesContract.OperacionFiltro.Propias) },
                     )
                 }
                 Spacer(Modifier.height(8.dp))
@@ -207,7 +205,7 @@ fun PostsListScreen(
 
             Box(modifier = Modifier.weight(1f)) {
                 when {
-                    state.isLoading && state.posts.isEmpty() -> {
+                    state.isLoading && state.operaciones.isEmpty() -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(16.dp),
@@ -219,7 +217,7 @@ fun PostsListScreen(
                         }
                     }
 
-                    state.error != null && state.posts.isEmpty() -> {
+                    state.error != null && state.operaciones.isEmpty() -> {
                         ErrorState(
                             message = state.error,
                             modifier = Modifier.align(Alignment.Center),
@@ -227,31 +225,31 @@ fun PostsListScreen(
                         )
                     }
 
-                    state.visiblePosts.isEmpty() -> {
-                        val isSavedTab = state.tab == PostsContract.PostsTab.Saved
+                    state.visibleOperaciones.isEmpty() -> {
+                        val isSavedTab = state.tab == OperacionesContract.OperacionesTab.Guardadas
                         EmptyState(
                             icon = when {
                                 isSavedTab -> Icons.Default.BookmarkBorder
-                                state.posts.isEmpty() -> Icons.Default.PostAdd
+                                state.operaciones.isEmpty() -> Icons.Default.PostAdd
                                 else -> Icons.Default.SearchOff
                             },
                             title = when {
-                                isSavedTab -> "No saved posts"
-                                state.posts.isEmpty() -> "No posts yet"
-                                else -> "No results"
+                                isSavedTab -> "No hay operaciones guardadas"
+                                state.operaciones.isEmpty() -> "No hay operaciones todavía"
+                                else -> "Sin resultados"
                             },
                             message = when {
-                                isSavedTab -> "Save posts you want to keep with the bookmark icon."
-                                state.posts.isEmpty() -> "Be the first to share an insight with your team."
-                                else -> "Nothing matches \u201C${state.query}\u201D. Try a different search or filter."
+                                isSavedTab -> "Guarda operaciones con el icono de marcador para tenerlas a mano."
+                                state.operaciones.isEmpty() -> "Sé el primero en registrar una operación."
+                                else -> "Nada coincide con “${state.query}”. Prueba con otra búsqueda o filtro."
                             },
                             modifier = Modifier.align(Alignment.Center),
                             actionLabel = when {
                                 isSavedTab -> null
-                                state.posts.isEmpty() -> "Create your first post"
+                                state.operaciones.isEmpty() -> "Crear tu primera operación"
                                 else -> null
                             },
-                            onAction = if (!isSavedTab && state.posts.isEmpty()) actions.onOpenCreate else null,
+                            onAction = if (!isSavedTab && state.operaciones.isEmpty()) actions.onOpenCreate else null,
                         )
                     }
 
@@ -267,23 +265,23 @@ fun PostsListScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             item(key = "hero") {
-                                if (state.tab == PostsContract.PostsTab.List) {
-                                    InsightsHero(
-                                        total = state.posts.size,
-                                        withPhotos = state.posts.count { it.imageUrl != null },
-                                        mine = state.posts.count { it.mine },
+                                if (state.tab == OperacionesContract.OperacionesTab.Lista) {
+                                    OperacionesHero(
+                                        total = state.operaciones.size,
+                                        conFotos = state.operaciones.count { it.imagenUrl != null },
+                                        propias = state.operaciones.count { it.propia },
                                     )
                                 } else {
-                                    SavedHero(savedCount = state.savedCount)
+                                    GuardadasHero(guardadasCount = state.guardadasCount)
                                 }
                             }
-                            items(state.visiblePosts, key = { it.id }) { post ->
-                                PostCard(
-                                    post = post,
-                                    onClick = { actions.onOpenDetail(post) },
-                                    onEdit = { actions.onOpenEdit(post) },
-                                    onDelete = { actions.onRequestDelete(post) },
-                                    onToggleSave = { actions.onToggleSave(post) },
+                            items(state.visibleOperaciones, key = { it.id }) { operacion ->
+                                OperacionCard(
+                                    operacion = operacion,
+                                    onClick = { actions.onOpenDetail(operacion) },
+                                    onEdit = { actions.onOpenEdit(operacion) },
+                                    onDelete = { actions.onRequestDelete(operacion) },
+                                    onToggleSave = { actions.onToggleSave(operacion) },
                                 )
                             }
                         }
@@ -295,10 +293,10 @@ fun PostsListScreen(
 }
 
 @Composable
-private fun InsightsHero(
+private fun OperacionesHero(
     total: Int,
-    withPhotos: Int,
-    mine: Int,
+    conFotos: Int,
+    propias: Int,
 ) {
     Column(
         modifier = Modifier
@@ -310,19 +308,54 @@ private fun InsightsHero(
             .padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
         Text(
-            text = "INSIGHTS",
+            text = "OPERACIONES",
             style = MaterialTheme.typography.labelSmall,
             color = Color.White.copy(alpha = 0.7f),
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "$total posts",
+            text = "$total operaciones",
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "$withPhotos with photos · $mine created by you",
+            text = "$conFotos con foto · $propias creadas por ti",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.85f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun GuardadasHero(
+    guardadasCount: Int,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.horizontalGradient(listOf(BrandGradientStart, BrandGradientEnd)),
+                shape = RoundedCornerShape(20.dp),
+            )
+            .padding(horizontal = 20.dp, vertical = 22.dp),
+    ) {
+        Text(
+            text = "GUARDADAS",
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White.copy(alpha = 0.7f),
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = if (guardadasCount == 1) "1 operación guardada" else "$guardadasCount operaciones guardadas",
+            style = MaterialTheme.typography.displayMedium,
+            color = Color.White,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "Tu colección personal, guardada en la base de datos.",
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(alpha = 0.85f),
             maxLines = 1,
@@ -337,38 +370,3 @@ private fun Modifier.rotateIf(enabled: Boolean, rotation: Float): Modifier =
     } else {
         this
     }
-
-@Composable
-private fun SavedHero(
-    savedCount: Int,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.horizontalGradient(listOf(BrandGradientStart, BrandGradientEnd)),
-                shape = RoundedCornerShape(20.dp),
-            )
-            .padding(horizontal = 20.dp, vertical = 22.dp),
-    ) {
-        Text(
-            text = "SAVED",
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.White.copy(alpha = 0.7f),
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = if (savedCount == 1) "1 saved post" else "$savedCount saved posts",
-            style = MaterialTheme.typography.displayMedium,
-            color = Color.White,
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = "Your personal collection, kept in the database.",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.85f),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}

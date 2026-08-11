@@ -1,8 +1,7 @@
-package com.example.mviexample.features.posts.components
+package com.example.mviexample.features.operaciones.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.BrandBadge
 import com.example.mviexample.designsystem.components.InitialsAvatar
 import com.example.mviexample.designsystem.components.PostImage
-import com.example.mviexample.shared.data.model.Post
+import com.example.mviexample.shared.data.model.Operacion
 
 @Composable
-fun PostCard(
-    post: Post,
+fun OperacionCard(
+    operacion: Operacion,
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -64,29 +63,29 @@ fun PostCard(
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                InitialsAvatar(name = post.authorName, size = 40.dp)
+                InitialsAvatar(name = operacion.autor, size = 40.dp)
                 Spacer(Modifier.size(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = post.authorName ?: "Anonymous",
+                        text = operacion.autor ?: "Anónimo",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = "Post #${post.id}",
+                        text = "Operación #${operacion.id}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                if (post.mine) {
-                    BrandBadge(text = "Yours")
+                if (operacion.propia) {
+                    BrandBadge(text = "Tuya")
                 }
             }
 
             PostImage(
-                url = post.imageUrl,
+                url = operacion.imagenUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(190.dp)
@@ -95,16 +94,25 @@ fun PostCard(
 
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = post.title,
+                    text = operacion.titulo,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+                val tipo = operacion.tipo
+                if (tipo != null) {
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = tipo,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    text = post.body,
+                    text = operacion.descripcion,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 3,
@@ -113,15 +121,15 @@ fun PostCard(
                 Spacer(Modifier.height(12.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Read more",
+                        text = "Ver más",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(Modifier.weight(1f))
                     Icon(
-                        imageVector = if (post.saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = if (post.saved) "Unsave post" else "Save post",
-                        tint = if (post.saved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        imageVector = if (operacion.guardada) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = if (operacion.guardada) "Quitar de guardadas" else "Guardar operación",
+                        tint = if (operacion.guardada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
                             .clickable(onClick = onToggleSave)
@@ -131,7 +139,7 @@ fun PostCard(
                     Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit post",
+                        contentDescription = "Editar operación",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
@@ -142,7 +150,7 @@ fun PostCard(
                     Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Delete post",
+                        contentDescription = "Eliminar operación",
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
