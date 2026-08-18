@@ -30,12 +30,8 @@ class OperacionesRepositoryImpl(
                 remote.forEach { operacion -> operacion.upsert() }
                 metaQueries.upsert(KEY_LAST_SYNC, currentTimeMillis().toString())
             }
-            val remoteIds = remote.mapTo(mutableSetOf()) { it.id }
-            val propias = queries.selectAll().executeAsList()
-                .map { it.toModel() }
-                .filter { it.propia && it.id !in remoteIds }
-            val merged: List<Operacion> = propias + remote
-            OperacionesResult(merged.sortedByDescending { operacion -> operacion.id }, fromCache = false)
+            val all = queries.selectAll().executeAsList().map { it.toModel() }
+            OperacionesResult(all, fromCache = false)
         } catch (e: Exception) {
             if (cached.isNotEmpty()) {
                 OperacionesResult(cached, fromCache = true)
@@ -61,9 +57,10 @@ class OperacionesRepositoryImpl(
                 autor = autor ?: "You",
             ),
         )
-        val operacion = remote.toModel().copy(propia = true, autor = autor ?: "You")
+        val operacion = remote.toModel().copy(autor = autor ?: "You")
         operacion.upsert()
-        return operacion
+        queries.setPropia(propia = 1L, id = operacion.id)
+        return operacion.copy(propia = true)
     }
 
     override suspend fun actualizarOperacion(
@@ -109,7 +106,6 @@ class OperacionesRepositoryImpl(
     }
 
     private fun Operacion.upsert() {
-        val existing = queries.selectById(id).executeAsOneOrNull()
         queries.insertOrReplace(
             id = id,
             titulo = titulo,
@@ -118,7 +114,7 @@ class OperacionesRepositoryImpl(
             tipo = tipo,
             autor = autor,
             propia = if (propia) 1L else 0L,
-            guardada = existing?.guardada ?: if (guardada) 1L else 0L,
+            guardada = if (guardada) 1L else 0L,
         )
     }
 }

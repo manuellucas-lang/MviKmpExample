@@ -16,11 +16,20 @@ selectById:
 SELECT * FROM operaciones WHERE id = ?;
 
 insertOrReplace:
-INSERT OR REPLACE INTO operaciones(id, titulo, descripcion, imagen_url, tipo, autor, propia, guardada)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO operaciones(id, titulo, descripcion, imagen_url, tipo, autor, propia, guardada)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(id) DO UPDATE SET
+    titulo = excluded.titulo,
+    descripcion = excluded.descripcion,
+    imagen_url = excluded.imagen_url,
+    tipo = excluded.tipo,
+    autor = excluded.autor;
 
 setGuardada:
 UPDATE operaciones SET guardada = ? WHERE id = ?;
+
+setPropia:
+UPDATE operaciones SET propia = ? WHERE id = ?;
 
 deleteById:
 DELETE FROM operaciones WHERE id = ?;
