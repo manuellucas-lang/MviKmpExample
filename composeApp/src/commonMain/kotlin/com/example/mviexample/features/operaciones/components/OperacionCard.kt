@@ -129,11 +129,11 @@ fun OperacionCard(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(Modifier.weight(1f))
-                    GooglePayPriceTag(
-                        price = formatEuros(operacionPrecio(operacion)),
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
                     if (operacion.guardada) {
+                        GooglePayPriceTag(
+                            price = formatEuros(operacionPrecio(operacion)),
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
                         PaidWithGooglePayBadge(compact = true)
                     } else {
                         GooglePayIconButton(
