@@ -18,6 +18,7 @@ class OperacionesRepositoryImpl(
     private val metaQueries = database.metaQueries
 
     override suspend fun getOperaciones(forceRefresh: Boolean): OperacionesResult {
+        resetLegacySavedFlagsIfNeeded()
         val cached = queries.selectAll().executeAsList().map { it.toModel() }
         val lastSync = metaQueries.selectById(KEY_LAST_SYNC).executeAsOneOrNull()?.value_?.toLongOrNull()
         val isFresh = lastSync != null && currentTimeMillis() - lastSync < CACHE_TTL_MILLIS
@@ -105,6 +106,14 @@ class OperacionesRepositoryImpl(
         queries.setGuardada(guardada = if (guardada) 1L else 0L, id = id)
     }
 
+    private fun resetLegacySavedFlagsIfNeeded() {
+        val migrated = metaQueries.selectById(KEY_GPAY_MIGRATION).executeAsOneOrNull()?.value_
+        if (migrated == null) {
+            queries.resetAllGuardadas()
+            metaQueries.upsert(KEY_GPAY_MIGRATION, currentTimeMillis().toString())
+        }
+    }
+
     private fun Operacion.upsert() {
         queries.insertOrReplace(
             id = id,
@@ -123,6 +132,7 @@ private fun String?.normalized(): String? = this?.trim()?.takeIf { it.isNotEmpty
 
 private const val CACHE_TTL_MILLIS = 60L * 60L * 1000L
 private const val KEY_LAST_SYNC = "last_sync_at"
+private const val KEY_GPAY_MIGRATION = "gpay_purchases_reset_v1"
 
 private fun Operaciones.toModel() =
     Operacion(

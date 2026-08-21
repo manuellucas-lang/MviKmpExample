@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.GooglePayButton
-import com.example.mviexample.designsystem.components.googlePayGlyph
+import com.example.mviexample.designsystem.components.GooglePayMark
 import com.example.mviexample.shared.data.model.Operacion
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,18 +64,7 @@ fun MockGooglePaySheet(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = googlePayGlyph(MaterialTheme.colorScheme.onSurface),
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp),
-                )
-                Spacer(Modifier.width(6.dp))
-                Text(
-                    text = "Pay",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                GooglePayMark(modifier = Modifier.height(24.dp))
             }
             Text(
                 text = "Entorno de pruebas (mock)",

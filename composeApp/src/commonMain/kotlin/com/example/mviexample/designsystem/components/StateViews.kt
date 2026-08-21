@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,10 +40,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EmptyState(
-    icon: ImageVector,
     title: String,
     message: String,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    iconContent: (@Composable () -> Unit)? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
@@ -61,12 +63,16 @@ fun EmptyState(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(44.dp),
-            )
+            if (iconContent != null) {
+                iconContent()
+            } else {
+                Icon(
+                    imageVector = icon ?: Icons.Default.PostAdd,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(44.dp),
+                )
+            }
         }
         Spacer(Modifier.height(20.dp))
         Text(

@@ -53,9 +53,9 @@ import com.example.mviexample.designsystem.components.BrandHeader
 import com.example.mviexample.designsystem.components.EmptyState
 import com.example.mviexample.designsystem.components.ErrorState
 import com.example.mviexample.designsystem.components.FilterPill
+import com.example.mviexample.designsystem.components.GooglePayMark
 import com.example.mviexample.designsystem.components.PostCardSkeleton
 import com.example.mviexample.designsystem.components.ThemeToggleButton
-import com.example.mviexample.designsystem.components.googlePayGlyph
 import com.example.mviexample.designsystem.theme.BrandGradientEnd
 import com.example.mviexample.designsystem.theme.BrandGradientStart
 import com.example.mviexample.features.operaciones.components.OperacionCard
@@ -117,16 +117,7 @@ fun OperacionesListScreen(
                     selected = state.tab == OperacionesContract.OperacionesTab.Guardadas,
                     onClick = { actions.onTabChange(OperacionesContract.OperacionesTab.Guardadas) },
                     icon = {
-                        Icon(
-                            imageVector = googlePayGlyph(
-                                if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            ),
-                            contentDescription = "Guardadas",
-                        )
+                        GooglePayMark(modifier = Modifier.height(16.dp))
                     },
                     label = { Text("Guardadas") },
                 )
@@ -229,8 +220,13 @@ fun OperacionesListScreen(
                     state.visibleOperaciones.isEmpty() -> {
                         val isSavedTab = state.tab == OperacionesContract.OperacionesTab.Guardadas
                         EmptyState(
+                            iconContent = if (isSavedTab) {
+                                { GooglePayMark(modifier = Modifier.height(26.dp)) }
+                            } else {
+                                null
+                            },
                             icon = when {
-                                isSavedTab -> googlePayGlyph(MaterialTheme.colorScheme.onPrimaryContainer)
+                                isSavedTab -> null
                                 state.operaciones.isEmpty() -> Icons.Default.PostAdd
                                 else -> Icons.Default.SearchOff
                             },
