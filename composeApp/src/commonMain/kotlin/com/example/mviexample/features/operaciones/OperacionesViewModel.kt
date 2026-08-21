@@ -15,7 +15,7 @@ import kotlinx.coroutines.delay
 class OperacionesViewModel(
     private val repository: OperacionesRepository,
     private val googlePayGateway: MockGooglePayGateway = MockGooglePayGateway(),
-    private val minRefreshFeedbackMillis: Long = 600L,
+    private val minRefreshFeedbackMillis: Long = 800L,
 ) : MviViewModel<OperacionesState, OperacionesIntent, OperacionesEffect>(
     initialState = OperacionesState(),
 ) {
