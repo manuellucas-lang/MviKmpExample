@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,12 +44,14 @@ fun OperacionCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onBuy: () -> Unit = {},
+    isRefreshing: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .alpha(if (isRefreshing) 0.55f else 1f)
+            .clickable(enabled = !isRefreshing, onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -136,9 +139,10 @@ fun OperacionCard(
                         )
                         PaidWithGooglePayBadge(compact = true)
                     } else {
-                        GooglePayIconButton(
-                            onClick = onBuy,
-                        )
+                    GooglePayIconButton(
+                        onClick = onBuy,
+                        enabled = !isRefreshing,
+                    )
                     }
                     Spacer(Modifier.size(4.dp))
                     Icon(
@@ -147,7 +151,7 @@ fun OperacionCard(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .clickable(onClick = onEdit)
+                            .clickable(enabled = !isRefreshing, onClick = onEdit)
                             .padding(10.dp)
                             .size(18.dp),
                     )
@@ -158,7 +162,7 @@ fun OperacionCard(
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .clickable(onClick = onDelete)
+                            .clickable(enabled = !isRefreshing, onClick = onDelete)
                             .padding(10.dp)
                             .size(18.dp),
                     )

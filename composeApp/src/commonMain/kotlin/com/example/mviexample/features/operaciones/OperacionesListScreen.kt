@@ -278,6 +278,7 @@ fun OperacionesListScreen(
                                     onEdit = { actions.onOpenEdit(operacion) },
                                     onDelete = { actions.onRequestDelete(operacion) },
                                     onBuy = { actions.onBuy(operacion) },
+                                    isRefreshing = state.isRefreshing,
                                 )
                             }
                         }
