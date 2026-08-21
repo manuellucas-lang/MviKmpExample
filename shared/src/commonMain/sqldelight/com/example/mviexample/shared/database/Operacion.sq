@@ -23,7 +23,8 @@ ON CONFLICT(id) DO UPDATE SET
     descripcion = excluded.descripcion,
     imagen_url = excluded.imagen_url,
     tipo = excluded.tipo,
-    autor = excluded.autor;
+    autor = excluded.autor,
+    guardada = excluded.guardada;
 
 setGuardada:
 UPDATE operaciones SET guardada = ? WHERE id = ?;

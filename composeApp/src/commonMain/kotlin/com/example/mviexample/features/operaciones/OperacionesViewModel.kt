@@ -19,7 +19,7 @@ class OperacionesViewModel(
 ) {
 
     init {
-        onIntent(OperacionesIntent.CargarOperaciones)
+        onIntent(OperacionesIntent.RefrescarOperaciones)
     }
 
     override suspend fun handleIntent(intent: OperacionesIntent) {
