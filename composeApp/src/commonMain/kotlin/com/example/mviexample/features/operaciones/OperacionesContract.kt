@@ -28,6 +28,8 @@ object OperacionesContract : MviContract {
         val isSaving: Boolean = false,
         val deleteTarget: Operacion? = null,
         val isDeleting: Boolean = false,
+        val paymentTarget: Operacion? = null,
+        val isProcessingPayment: Boolean = false,
         val error: String? = null,
     ) : MviContract.UiState {
 
@@ -67,7 +69,9 @@ object OperacionesContract : MviContract {
         data class AbrirEditar(val operacion: Operacion) : OperacionesIntent
         data object CerrarEditor : OperacionesIntent
         data class GuardarOperacion(val titulo: String, val descripcion: String, val imagenUrl: String?) : OperacionesIntent
-        data class ToggleGuardar(val operacion: Operacion) : OperacionesIntent
+        data class IniciarPago(val operacion: Operacion) : OperacionesIntent
+        data object ConfirmarPago : OperacionesIntent
+        data object CancelarPago : OperacionesIntent
         data class SolicitarBorrado(val operacion: Operacion) : OperacionesIntent
         data object ConfirmarBorrado : OperacionesIntent
         data object DescartarBorrado : OperacionesIntent
@@ -76,5 +80,6 @@ object OperacionesContract : MviContract {
 
     sealed interface OperacionesEffect : MviContract.UiEffect {
         data class MostrarMensaje(val mensaje: String) : OperacionesEffect
+        data class PagoCompletado(val operacion: Operacion, val transactionId: String) : OperacionesEffect
     }
 }

@@ -15,11 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
@@ -34,14 +33,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.AppButton
 import com.example.mviexample.designsystem.components.AppButtonStyle
 import com.example.mviexample.designsystem.components.AppIconButton
 import com.example.mviexample.designsystem.components.BrandBadge
+import com.example.mviexample.designsystem.components.GooglePayButton
 import com.example.mviexample.designsystem.components.InitialsAvatar
+import com.example.mviexample.designsystem.components.PaidWithGooglePayBadge
 import com.example.mviexample.designsystem.components.PostImage
+import com.example.mviexample.features.payments.formatEuros
+import com.example.mviexample.features.payments.operacionPrecio
 
 @Composable
 fun OperacionDetailScreen(
@@ -83,18 +87,27 @@ fun OperacionDetailScreen(
                 ) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                 }
-                AppIconButton(
-                    onClick = { actions.onToggleSave(operacion) },
+                Surface(
+                    color = postScrim,
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .windowInsetsPadding(WindowInsets.statusBars)
                         .padding(8.dp),
-                    containerColor = postScrim,
-                    contentColor = Color.White,
                 ) {
-                    Icon(
-                        imageVector = if (operacion.guardada) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = if (operacion.guardada) "Quitar de guardadas" else "Guardar operación",
+                    Text(
+                        text = formatEuros(operacionPrecio(operacion)),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    )
+                }
+                if (operacion.guardada) {
+                    PaidWithGooglePayBadge(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(20.dp),
                     )
                 }
                 if (operacion.propia) {
@@ -168,39 +181,57 @@ fun OperacionDetailScreen(
                 color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp,
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
                         .padding(horizontal = 20.dp, vertical = 14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    AppButton(
-                        text = "Editar",
-                        onClick = { actions.onOpenEdit(operacion) },
-                        style = AppButtonStyle.Outlined,
-                        modifier = Modifier.weight(1f),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        },
-                    )
-                    AppButton(
-                        text = "Eliminar",
-                        onClick = { actions.onRequestDelete(operacion) },
-                        style = AppButtonStyle.Error,
-                        modifier = Modifier.weight(1f),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.DeleteOutline,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        },
-                    )
+                    if (operacion.guardada) {
+                        GooglePayButton(
+                            onClick = {},
+                            enabled = false,
+                            label = "Comprada con",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    } else {
+                        GooglePayButton(
+                            onClick = { actions.onBuy(operacion) },
+                            label = "Pagar",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        AppButton(
+                            text = "Editar",
+                            onClick = { actions.onOpenEdit(operacion) },
+                            style = AppButtonStyle.Outlined,
+                            modifier = Modifier.weight(1f),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            },
+                        )
+                        AppButton(
+                            text = "Eliminar",
+                            onClick = { actions.onRequestDelete(operacion) },
+                            style = AppButtonStyle.Error,
+                            modifier = Modifier.weight(1f),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.DeleteOutline,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }

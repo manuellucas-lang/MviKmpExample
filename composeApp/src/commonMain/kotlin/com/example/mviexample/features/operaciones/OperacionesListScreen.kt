@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.Refresh
@@ -57,6 +55,7 @@ import com.example.mviexample.designsystem.components.ErrorState
 import com.example.mviexample.designsystem.components.FilterPill
 import com.example.mviexample.designsystem.components.PostCardSkeleton
 import com.example.mviexample.designsystem.components.ThemeToggleButton
+import com.example.mviexample.designsystem.components.googlePayGlyph
 import com.example.mviexample.designsystem.theme.BrandGradientEnd
 import com.example.mviexample.designsystem.theme.BrandGradientStart
 import com.example.mviexample.features.operaciones.components.OperacionCard
@@ -75,7 +74,7 @@ fun OperacionesListScreen(
             BrandHeader(
                 title = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) "Guardadas" else "Operaciones",
                 subtitle = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
-                    "${state.guardadasCount} operaciones guardadas"
+                    "${state.guardadasCount} operaciones compradas"
                 } else {
                     "${state.operaciones.size} operaciones · ${state.operaciones.count { it.propia }} tuyas"
                 },
@@ -119,12 +118,14 @@ fun OperacionesListScreen(
                     onClick = { actions.onTabChange(OperacionesContract.OperacionesTab.Guardadas) },
                     icon = {
                         Icon(
-                            imageVector = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
-                                Icons.Filled.Bookmark
-                            } else {
-                                Icons.Filled.BookmarkBorder
-                            },
-                            contentDescription = null,
+                            imageVector = googlePayGlyph(
+                                if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                            ),
+                            contentDescription = "Guardadas",
                         )
                     },
                     label = { Text("Guardadas") },
@@ -229,17 +230,17 @@ fun OperacionesListScreen(
                         val isSavedTab = state.tab == OperacionesContract.OperacionesTab.Guardadas
                         EmptyState(
                             icon = when {
-                                isSavedTab -> Icons.Default.BookmarkBorder
+                                isSavedTab -> googlePayGlyph(MaterialTheme.colorScheme.onPrimaryContainer)
                                 state.operaciones.isEmpty() -> Icons.Default.PostAdd
                                 else -> Icons.Default.SearchOff
                             },
                             title = when {
-                                isSavedTab -> "No hay operaciones guardadas"
+                                isSavedTab -> "No hay operaciones compradas"
                                 state.operaciones.isEmpty() -> "No hay operaciones todavía"
                                 else -> "Sin resultados"
                             },
                             message = when {
-                                isSavedTab -> "Guarda operaciones con el icono de marcador para tenerlas a mano."
+                                isSavedTab -> "Compra operaciones con Google Pay y aparecerán aquí."
                                 state.operaciones.isEmpty() -> "Sé el primero en registrar una operación."
                                 else -> "Nada coincide con “${state.query}”. Prueba con otra búsqueda o filtro."
                             },
@@ -281,7 +282,7 @@ fun OperacionesListScreen(
                                     onClick = { actions.onOpenDetail(operacion) },
                                     onEdit = { actions.onOpenEdit(operacion) },
                                     onDelete = { actions.onRequestDelete(operacion) },
-                                    onToggleSave = { actions.onToggleSave(operacion) },
+                                    onBuy = { actions.onBuy(operacion) },
                                 )
                             }
                         }
@@ -349,13 +350,13 @@ private fun GuardadasHero(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = if (guardadasCount == 1) "1 operación guardada" else "$guardadasCount operaciones guardadas",
+            text = if (guardadasCount == 1) "1 operación comprada" else "$guardadasCount operaciones compradas",
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Tu colección personal, guardada en la base de datos.",
+            text = "Tus operaciones pagadas con Google Pay.",
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(alpha = 0.85f),
             maxLines = 1,
