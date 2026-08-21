@@ -49,7 +49,7 @@ fun operacionPrecio(operacion: Operacion): Double =
 fun formatEuros(value: Double): String {
     val enteros = value.toInt()
     val centimos = ((value - enteros) * 100).roundToInt()
-    return "%d,%02d €".format(enteros, centimos)
+    return "$enteros,${centimos.toString().padStart(2, '0')} €"
 }
 
 class MockGooglePayGateway(
