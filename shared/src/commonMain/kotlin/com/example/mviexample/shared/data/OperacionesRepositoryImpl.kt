@@ -103,6 +103,9 @@ class OperacionesRepositoryImpl(
     }
 
     override suspend fun setOperacionGuardada(id: Long, guardada: Boolean) {
+        if (guardada) {
+            api.comprarOperacion(id)
+        }
         queries.setGuardada(guardada = if (guardada) 1L else 0L, id = id)
     }
 
@@ -154,4 +157,5 @@ private fun OperacionDto.toModel() =
         imagenUrl = imagenUrl.normalized(),
         tipo = tipo,
         autor = autor,
+        guardada = guardada,
     )

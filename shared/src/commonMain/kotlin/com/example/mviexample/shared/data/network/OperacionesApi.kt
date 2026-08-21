@@ -29,6 +29,9 @@ class OperacionesApi(
             setBody(request)
         }.body()
 
+    suspend fun comprarOperacion(id: Long): OperacionDto =
+        client.post("$BASE_URL/operaciones/$id/purchase").body()
+
     suspend fun deleteOperacion(id: Long) {
         client.delete("$BASE_URL/operaciones/$id")
     }

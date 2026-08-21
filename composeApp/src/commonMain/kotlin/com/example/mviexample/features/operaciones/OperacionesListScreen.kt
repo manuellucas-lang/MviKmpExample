@@ -7,7 +7,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -53,6 +51,7 @@ import com.example.mviexample.designsystem.components.BrandHeader
 import com.example.mviexample.designsystem.components.EmptyState
 import com.example.mviexample.designsystem.components.ErrorState
 import com.example.mviexample.designsystem.components.FilterPill
+import com.example.mviexample.designsystem.components.PullToRefreshContainer
 import com.example.mviexample.designsystem.components.GooglePayMark
 import com.example.mviexample.designsystem.components.PostCardSkeleton
 import com.example.mviexample.designsystem.components.ThemeToggleButton
@@ -191,11 +190,11 @@ fun OperacionesListScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            if (state.isRefreshing) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
-
-            Box(modifier = Modifier.weight(1f)) {
+            PullToRefreshContainer(
+                isRefreshing = state.isRefreshing,
+                onRefresh = actions.onRefresh,
+                modifier = Modifier.weight(1f),
+            ) {
                 when {
                     state.isLoading && state.operaciones.isEmpty() -> {
                         LazyColumn(
