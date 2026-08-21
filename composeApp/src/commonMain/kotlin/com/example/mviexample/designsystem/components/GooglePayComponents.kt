@@ -109,7 +109,7 @@ fun PaidWithGooglePayBadge(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(if (compact) 14.dp else 16.dp),
+            modifier = Modifier.size(if (compact) 13.dp else 16.dp),
         )
         if (!compact) {
             Spacer(Modifier.width(5.dp))
@@ -119,9 +119,9 @@ fun PaidWithGooglePayBadge(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
             )
-            Spacer(Modifier.width(5.dp))
-            GooglePayMark(modifier = Modifier.height(10.dp))
         }
+        Spacer(Modifier.width(5.dp))
+        GooglePayMark(modifier = Modifier.height(if (compact) 11.dp else 10.dp))
     }
 }
 
