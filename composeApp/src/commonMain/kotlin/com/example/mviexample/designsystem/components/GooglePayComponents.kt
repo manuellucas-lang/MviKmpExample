@@ -10,14 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -105,23 +101,16 @@ fun PaidWithGooglePayBadge(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            imageVector = Icons.Default.CheckCircle,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(if (compact) 13.dp else 16.dp),
-        )
         if (!compact) {
-            Spacer(Modifier.width(5.dp))
             Text(
                 text = "Pagada",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
             )
+            Spacer(Modifier.width(5.dp))
         }
-        Spacer(Modifier.width(5.dp))
-        GooglePayMark(modifier = Modifier.height(if (compact) 11.dp else 10.dp))
+        GooglePayMark(modifier = Modifier.height(if (compact) 12.dp else 11.dp))
     }
 }
 
