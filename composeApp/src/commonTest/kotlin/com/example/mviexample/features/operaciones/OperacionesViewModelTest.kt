@@ -43,7 +43,10 @@ class OperacionesViewModelTest {
         result: OperacionesResult = OperacionesResult(emptyList(), fromCache = false),
         onCreate: (Operacion) -> Operacion = { it },
         onSetGuardada: ((Long, Boolean) -> Unit)? = null,
-    ) = OperacionesViewModel(FakeOperacionesRepository(result, onCreate, onSetGuardada))
+    ) = OperacionesViewModel(
+        repository = FakeOperacionesRepository(result, onCreate, onSetGuardada),
+        minRefreshFeedbackMillis = 0L,
+    )
 
     @Test
     fun initialState_usesDefaults() {
@@ -79,7 +82,7 @@ class OperacionesViewModelTest {
 
     @Test
     fun cargarOperaciones_failure_setsErrorAndEmitsEffect() = runTest(dispatcher) {
-        val viewModel = OperacionesViewModel(FailingOperacionesRepository())
+        val viewModel = OperacionesViewModel(FailingOperacionesRepository(), minRefreshFeedbackMillis = 0L)
 
         advanceUntilIdle()
 
@@ -305,7 +308,7 @@ class OperacionesViewModelTest {
 
     @Test
     fun confirmarPago_failure_keepsSheetOpenAndEmitsMessage() = runTest(dispatcher) {
-        val viewModel = OperacionesViewModel(FailingOperacionesRepository())
+        val viewModel = OperacionesViewModel(FailingOperacionesRepository(), minRefreshFeedbackMillis = 0L)
 
         advanceUntilIdle()
         viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))

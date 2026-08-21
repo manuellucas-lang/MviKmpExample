@@ -9,11 +9,13 @@ import com.example.mviexample.features.payments.operacionPrecio
 import com.example.mviexample.mvi.MviViewModel
 import com.example.mviexample.shared.data.OperacionesRepository
 import com.example.mviexample.shared.data.model.Operacion
+import com.example.mviexample.shared.util.currentTimeMillis
 import kotlinx.coroutines.delay
 
 class OperacionesViewModel(
     private val repository: OperacionesRepository,
     private val googlePayGateway: MockGooglePayGateway = MockGooglePayGateway(),
+    private val minRefreshFeedbackMillis: Long = 600L,
 ) : MviViewModel<OperacionesState, OperacionesIntent, OperacionesEffect>(
     initialState = OperacionesState(),
 ) {
@@ -60,7 +62,14 @@ class OperacionesViewModel(
             )
         }
         try {
+            val startedAt = currentTimeMillis()
             val result = repository.getOperaciones(forceRefresh)
+            if (forceRefresh) {
+                val elapsed = currentTimeMillis() - startedAt
+                if (elapsed < minRefreshFeedbackMillis) {
+                    delay(minRefreshFeedbackMillis - elapsed)
+                }
+            }
             setState {
                 it.copy(
                     isLoading = false,
