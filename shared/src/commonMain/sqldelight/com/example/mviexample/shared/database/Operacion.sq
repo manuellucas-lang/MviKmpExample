@@ -28,6 +28,9 @@ ON CONFLICT(id) DO UPDATE SET
 setGuardada:
 UPDATE operaciones SET guardada = ? WHERE id = ?;
 
+resetAllGuardadas:
+UPDATE operaciones SET guardada = 0;
+
 setPropia:
 UPDATE operaciones SET propia = ? WHERE id = ?;
 

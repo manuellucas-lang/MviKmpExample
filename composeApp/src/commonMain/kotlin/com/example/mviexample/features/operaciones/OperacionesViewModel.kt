@@ -3,12 +3,17 @@ package com.example.mviexample.features.operaciones
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesEffect
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesIntent
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesState
+import com.example.mviexample.features.payments.GooglePayResult
+import com.example.mviexample.features.payments.MockGooglePayGateway
+import com.example.mviexample.features.payments.operacionPrecio
 import com.example.mviexample.mvi.MviViewModel
 import com.example.mviexample.shared.data.OperacionesRepository
 import com.example.mviexample.shared.data.model.Operacion
+import kotlinx.coroutines.delay
 
 class OperacionesViewModel(
     private val repository: OperacionesRepository,
+    private val googlePayGateway: MockGooglePayGateway = MockGooglePayGateway(),
 ) : MviViewModel<OperacionesState, OperacionesIntent, OperacionesEffect>(
     initialState = OperacionesState(),
 ) {
@@ -36,7 +41,9 @@ class OperacionesViewModel(
                 it.copy(isEditorOpen = false, editorOperacion = null, isSaving = false)
             }
             is OperacionesIntent.GuardarOperacion -> guardarOperacion(intent.titulo, intent.descripcion, intent.imagenUrl)
-            is OperacionesIntent.ToggleGuardar -> toggleGuardar(intent.operacion)
+            is OperacionesIntent.IniciarPago -> iniciarPago(intent.operacion)
+            is OperacionesIntent.ConfirmarPago -> confirmarPago()
+            is OperacionesIntent.CancelarPago -> cancelarPago()
             is OperacionesIntent.SolicitarBorrado -> setState { it.copy(deleteTarget = intent.operacion) }
             is OperacionesIntent.ConfirmarBorrado -> borrarOperacionActual()
             is OperacionesIntent.DescartarBorrado -> setState { it.copy(deleteTarget = null) }
@@ -120,34 +127,69 @@ class OperacionesViewModel(
         }
     }
 
-    private suspend fun toggleGuardar(operacion: Operacion) {
-        val nuevoGuardada = !operacion.guardada
-        try {
-            repository.setOperacionGuardada(operacion.id, nuevoGuardada)
-            setState { current ->
-                current.copy(
-                    operaciones = current.operaciones.map {
-                        if (it.id == operacion.id) it.copy(guardada = nuevoGuardada) else it
-                    },
-                    selectedOperacion = if (current.selectedOperacion?.id == operacion.id) {
-                        current.selectedOperacion?.copy(guardada = nuevoGuardada)
-                    } else {
-                        current.selectedOperacion
-                    },
-                )
-            }
-            emitEffect(
-                OperacionesEffect.MostrarMensaje(
-                    if (nuevoGuardada) "Operación guardada" else "Operación eliminada de guardadas",
-                ),
-            )
-        } catch (e: Exception) {
-            emitEffect(
-                OperacionesEffect.MostrarMensaje(
-                    "No se pudo actualizar la operación guardada: ${e.message ?: "error desconocido"}",
-                ),
-            )
+    private suspend fun iniciarPago(operacion: Operacion) {
+        if (operacion.guardada) {
+            emitEffect(OperacionesEffect.MostrarMensaje("Esta operación ya está comprada"))
+            return
         }
+        setState { it.copy(paymentTarget = operacion, isProcessingPayment = false) }
+    }
+
+    private suspend fun confirmarPago() {
+        val target = state.value.paymentTarget ?: return
+        if (state.value.isProcessingPayment) return
+        setState { it.copy(isProcessingPayment = true) }
+        val request = googlePayGateway.buildPaymentRequest(target, operacionPrecio(target))
+        when (val result = googlePayGateway.processPayment(request)) {
+            is GooglePayResult.Success -> {
+                try {
+                    repository.setOperacionGuardada(target.id, true)
+                    setState { current ->
+                        current.copy(
+                            operaciones = current.operaciones.map {
+                                if (it.id == target.id) it.copy(guardada = true) else it
+                            },
+                            selectedOperacion = if (current.selectedOperacion?.id == target.id) {
+                                current.selectedOperacion?.copy(guardada = true)
+                            } else {
+                                current.selectedOperacion
+                            },
+                            paymentTarget = null,
+                            isProcessingPayment = false,
+                        )
+                    }
+                    emitEffect(
+                        OperacionesEffect.PagoCompletado(
+                            operacion = target.copy(guardada = true),
+                            transactionId = result.transactionId,
+                        ),
+                    )
+                    emitEffect(OperacionesEffect.MostrarMensaje("Pago completado · Operación guardada"))
+                } catch (e: Exception) {
+                    setState { it.copy(isProcessingPayment = false) }
+                    emitEffect(
+                        OperacionesEffect.MostrarMensaje(
+                            "El pago se procesó pero no se pudo guardar: ${e.message ?: "error desconocido"}",
+                        ),
+                    )
+                }
+            }
+
+            is GooglePayResult.Cancelled -> {
+                setState { it.copy(paymentTarget = null, isProcessingPayment = false) }
+                emitEffect(OperacionesEffect.MostrarMensaje("Pago cancelado"))
+            }
+
+            is GooglePayResult.Error -> {
+                setState { it.copy(isProcessingPayment = false) }
+                emitEffect(OperacionesEffect.MostrarMensaje("Error de pago: ${result.mensaje}"))
+            }
+        }
+    }
+
+    private fun cancelarPago() {
+        if (state.value.isProcessingPayment) return
+        setState { it.copy(paymentTarget = null, isProcessingPayment = false) }
     }
 
     private suspend fun borrarOperacionActual() {

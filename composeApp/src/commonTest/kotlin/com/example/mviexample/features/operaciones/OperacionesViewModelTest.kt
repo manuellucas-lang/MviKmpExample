@@ -201,7 +201,32 @@ class OperacionesViewModelTest {
     }
 
     @Test
-    fun toggleGuardar_marksAndPersists() = runTest(dispatcher) {
+    fun iniciarPago_showsPaymentSheet() = runTest(dispatcher) {
+        val viewModel = createViewModel(OperacionesResult(listOf(sampleOperacion), fromCache = false))
+
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
+        advanceUntilIdle()
+
+        assertEquals(sampleOperacion, viewModel.state.value.paymentTarget)
+        assertFalse(viewModel.state.value.isProcessingPayment)
+    }
+
+    @Test
+    fun iniciarPago_onAlreadyPurchased_doesNotOpenSheet() = runTest(dispatcher) {
+        val comprada = sampleOperacion.copy(guardada = true)
+        val viewModel = createViewModel(OperacionesResult(listOf(comprada), fromCache = false))
+
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.IniciarPago(comprada))
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.paymentTarget)
+        assertTrue(viewModel.effects.first() is OperacionesContract.OperacionesEffect.MostrarMensaje)
+    }
+
+    @Test
+    fun confirmarPago_marksGuardadaAndPersists() = runTest(dispatcher) {
         var persistedId: Long? = null
         var persistedGuardada: Boolean? = null
         val viewModel = createViewModel(
@@ -213,38 +238,56 @@ class OperacionesViewModelTest {
         )
 
         advanceUntilIdle()
-        viewModel.onIntent(OperacionesIntent.ToggleGuardar(sampleOperacion))
+        viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.ConfirmarPago)
         advanceUntilIdle()
 
         assertTrue(viewModel.state.value.operaciones.first().guardada)
         assertEquals(sampleOperacion.id, persistedId)
         assertEquals(true, persistedGuardada)
-        assertTrue(viewModel.effects.first() is OperacionesContract.OperacionesEffect.MostrarMensaje)
+        assertNull(viewModel.state.value.paymentTarget)
+        assertFalse(viewModel.state.value.isProcessingPayment)
+        val completado = viewModel.effects.first()
+        assertTrue(completado is OperacionesContract.OperacionesEffect.PagoCompletado)
+        assertEquals(
+            sampleOperacion.id,
+            (completado as OperacionesContract.OperacionesEffect.PagoCompletado).operacion.id,
+        )
     }
 
     @Test
-    fun toggleGuardar_unsavesOperacion() = runTest(dispatcher) {
-        val guardada = sampleOperacion.copy(guardada = true)
-        val viewModel = createViewModel(OperacionesResult(listOf(guardada), fromCache = false))
-
-        advanceUntilIdle()
-        viewModel.onIntent(OperacionesIntent.ToggleGuardar(guardada))
-        advanceUntilIdle()
-
-        assertFalse(viewModel.state.value.operaciones.first().guardada)
-    }
-
-    @Test
-    fun toggleGuardar_updatesSelectedOperacion() = runTest(dispatcher) {
+    fun confirmarPago_updatesSelectedOperacion() = runTest(dispatcher) {
         val viewModel = createViewModel(OperacionesResult(listOf(sampleOperacion), fromCache = false))
 
         advanceUntilIdle()
         viewModel.onIntent(OperacionesIntent.AbrirDetalle(sampleOperacion))
         advanceUntilIdle()
-        viewModel.onIntent(OperacionesIntent.ToggleGuardar(sampleOperacion))
+        viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.ConfirmarPago)
         advanceUntilIdle()
 
         assertTrue(viewModel.state.value.selectedOperacion?.guardada == true)
+    }
+
+    @Test
+    fun cancelarPago_closesSheetWithoutSaving() = runTest(dispatcher) {
+        var persistCalls = 0
+        val viewModel = createViewModel(
+            result = OperacionesResult(listOf(sampleOperacion), fromCache = false),
+            onSetGuardada = { _, _ -> persistCalls++ },
+        )
+
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.CancelarPago)
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.paymentTarget)
+        assertFalse(viewModel.state.value.operaciones.first().guardada)
+        assertEquals(0, persistCalls)
     }
 
     @Test
@@ -261,13 +304,17 @@ class OperacionesViewModelTest {
     }
 
     @Test
-    fun toggleGuardar_failure_keepsStateAndEmitsMessage() = runTest(dispatcher) {
+    fun confirmarPago_failure_keepsSheetOpenAndEmitsMessage() = runTest(dispatcher) {
         val viewModel = OperacionesViewModel(FailingOperacionesRepository())
 
         advanceUntilIdle()
-        viewModel.onIntent(OperacionesIntent.ToggleGuardar(sampleOperacion))
+        viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
+        advanceUntilIdle()
+        viewModel.onIntent(OperacionesIntent.ConfirmarPago)
         advanceUntilIdle()
 
+        assertNotNull(viewModel.state.value.paymentTarget)
+        assertFalse(viewModel.state.value.isProcessingPayment)
         assertFalse(viewModel.state.value.operaciones.any { it.guardada })
         assertTrue(viewModel.effects.first() is OperacionesContract.OperacionesEffect.MostrarMensaje)
     }

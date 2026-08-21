@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -29,8 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.mviexample.designsystem.components.BrandBadge
+import com.example.mviexample.designsystem.components.GooglePayIconButton
+import com.example.mviexample.designsystem.components.GooglePayPriceTag
 import com.example.mviexample.designsystem.components.InitialsAvatar
+import com.example.mviexample.designsystem.components.PaidWithGooglePayBadge
 import com.example.mviexample.designsystem.components.PostImage
+import com.example.mviexample.features.payments.formatEuros
+import com.example.mviexample.features.payments.operacionPrecio
 import com.example.mviexample.shared.data.model.Operacion
 
 @Composable
@@ -39,7 +42,7 @@ fun OperacionCard(
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onToggleSave: () -> Unit = {},
+    onBuy: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -126,16 +129,17 @@ fun OperacionCard(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(Modifier.weight(1f))
-                    Icon(
-                        imageVector = if (operacion.guardada) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = if (operacion.guardada) "Quitar de guardadas" else "Guardar operación",
-                        tint = if (operacion.guardada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .clickable(onClick = onToggleSave)
-                            .padding(10.dp)
-                            .size(18.dp),
-                    )
+                    if (operacion.guardada) {
+                        GooglePayPriceTag(
+                            price = formatEuros(operacionPrecio(operacion)),
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
+                        PaidWithGooglePayBadge(compact = true)
+                    } else {
+                        GooglePayIconButton(
+                            onClick = onBuy,
+                        )
+                    }
                     Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.Edit,

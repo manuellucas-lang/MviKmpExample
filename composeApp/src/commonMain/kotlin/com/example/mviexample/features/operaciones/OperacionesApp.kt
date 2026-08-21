@@ -19,6 +19,9 @@ import com.example.mviexample.designsystem.components.ConfirmDialog
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesEffect
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesIntent
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesState
+import com.example.mviexample.features.payments.MockGooglePayGateway
+import com.example.mviexample.features.payments.MockGooglePaySheet
+import com.example.mviexample.features.payments.operacionPrecio
 import com.example.mviexample.shared.AppGraph
 import com.example.mviexample.shared.data.model.Operacion
 
@@ -44,11 +47,15 @@ data class OperacionesActions(
     val onRetry: () -> Unit = {},
     val onRequestDelete: (Operacion) -> Unit = {},
     val onOpenEdit: (Operacion) -> Unit = {},
-    val onToggleSave: (Operacion) -> Unit = {},
+    val onBuy: (Operacion) -> Unit = {},
+    val onConfirmPayment: () -> Unit = {},
+    val onCancelPayment: () -> Unit = {},
     val onCloseDetail: () -> Unit = {},
     val onCloseEditor: () -> Unit = {},
     val onSave: (String, String, String?) -> Unit = { _, _, _ -> },
 )
+
+private val paymentRequestBuilder = MockGooglePayGateway(processingDelayMillis = 0L)
 
 @Composable
 fun OperacionesApp(
@@ -63,6 +70,7 @@ fun OperacionesApp(
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OperacionesEffect.MostrarMensaje -> snackbarHostState.showSnackbar(effect.mensaje)
+                is OperacionesEffect.PagoCompletado -> Unit
             }
         }
     }
@@ -77,13 +85,25 @@ fun OperacionesApp(
         onRetry = { viewModel.onIntent(OperacionesIntent.Reintentar) },
         onRequestDelete = { viewModel.onIntent(OperacionesIntent.SolicitarBorrado(it)) },
         onOpenEdit = { viewModel.onIntent(OperacionesIntent.AbrirEditar(it)) },
-        onToggleSave = { viewModel.onIntent(OperacionesIntent.ToggleGuardar(it)) },
+        onBuy = { viewModel.onIntent(OperacionesIntent.IniciarPago(it)) },
+        onConfirmPayment = { viewModel.onIntent(OperacionesIntent.ConfirmarPago) },
+        onCancelPayment = { viewModel.onIntent(OperacionesIntent.CancelarPago) },
         onCloseDetail = { viewModel.onIntent(OperacionesIntent.CerrarDetalle) },
         onCloseEditor = { viewModel.onIntent(OperacionesIntent.CerrarEditor) },
         onSave = { titulo, descripcion, imagenUrl ->
             viewModel.onIntent(OperacionesIntent.GuardarOperacion(titulo, descripcion, imagenUrl))
         },
     )
+
+    state.paymentTarget?.let { target ->
+        MockGooglePaySheet(
+            operacion = target,
+            request = paymentRequestBuilder.buildPaymentRequest(target, operacionPrecio(target)),
+            isProcessing = state.isProcessingPayment,
+            onPay = actions.onConfirmPayment,
+            onCancel = actions.onCancelPayment,
+        )
+    }
 
     state.deleteTarget?.let { target ->
         ConfirmDialog(
