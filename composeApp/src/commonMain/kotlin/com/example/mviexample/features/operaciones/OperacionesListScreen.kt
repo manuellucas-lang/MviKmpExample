@@ -272,13 +272,18 @@ fun OperacionesListScreen(
                                 }
                             }
                             items(state.visibleOperaciones, key = { it.id }) { operacion ->
-                                OperacionCard(
-                                    operacion = operacion,
-                                    onClick = { actions.onOpenDetail(operacion) },
-                                    onEdit = { actions.onOpenEdit(operacion) },
-                                    onDelete = { actions.onRequestDelete(operacion) },
-                                    onBuy = { actions.onBuy(operacion) },
-                                )
+                                if (state.isRefreshing) {
+                                    PostCardSkeleton()
+                                } else {
+                                    OperacionCard(
+                                        operacion = operacion,
+                                        onClick = { actions.onOpenDetail(operacion) },
+                                        onEdit = { actions.onOpenEdit(operacion) },
+                                        onDelete = { actions.onRequestDelete(operacion) },
+                                        onBuy = { actions.onBuy(operacion) },
+                                        isRefreshing = state.isRefreshing,
+                                    )
+                                }
                             }
                         }
                     }

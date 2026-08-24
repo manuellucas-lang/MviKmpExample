@@ -66,15 +66,20 @@ fun GooglePayButton(
 fun GooglePayIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     contentDescription: String = "Pagar con Google Pay",
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClickLabel = contentDescription, onClick = onClick)
+            .clickable(
+                enabled = enabled,
+                onClickLabel = contentDescription,
+                onClick = onClick,
+            )
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (enabled) 1f else 0.5f),
                 shape = RoundedCornerShape(12.dp),
             )
             .background(color = MaterialTheme.colorScheme.surface)
@@ -82,7 +87,7 @@ fun GooglePayIconButton(
             .semantics { this.contentDescription = contentDescription },
         contentAlignment = Alignment.Center,
     ) {
-        GooglePayMark(modifier = Modifier.height(14.dp))
+        GooglePayMark(dark = enabled, modifier = Modifier.height(14.dp))
     }
 }
 
