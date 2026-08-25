@@ -32,7 +32,8 @@ class OperacionesRepositoryImpl(
             val remote = api.getOperaciones().map { it.toModel() }
             queries.transaction {
                 remote.forEach { operacion ->
-                    operacion.copy(propia = existingPropia[operacion.id] == true).upsert()
+                    val isOwn = existingPropia[operacion.id] == true || operacion.autor == AUTOR_PROPIO
+                    operacion.copy(propia = isOwn).upsert()
                 }
                 metaQueries.upsert(KEY_LAST_SYNC, currentTimeMillis().toString())
             }
@@ -141,6 +142,7 @@ private fun String?.normalized(): String? = this?.trim()?.takeIf { it.isNotEmpty
 private const val CACHE_TTL_MILLIS = 60L * 60L * 1000L
 private const val KEY_LAST_SYNC = "last_sync_at"
 private const val KEY_GPAY_MIGRATION = "gpay_purchases_reset_v1"
+private const val AUTOR_PROPIO = "You"
 
 private fun Operaciones.toModel() =
     Operacion(
