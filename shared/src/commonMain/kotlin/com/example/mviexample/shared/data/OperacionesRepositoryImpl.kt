@@ -26,9 +26,14 @@ class OperacionesRepositoryImpl(
             return OperacionesResult(cached, fromCache = true)
         }
         return try {
+            val existingPropia = queries.selectAll().executeAsList()
+                .filter { it.propia == 1L }
+                .associate { it.id to true }
             val remote = api.getOperaciones().map { it.toModel() }
             queries.transaction {
-                remote.forEach { operacion -> operacion.upsert() }
+                remote.forEach { operacion ->
+                    operacion.copy(propia = existingPropia[operacion.id] == true).upsert()
+                }
                 metaQueries.upsert(KEY_LAST_SYNC, currentTimeMillis().toString())
             }
             val all = queries.selectAll().executeAsList().map { it.toModel() }
