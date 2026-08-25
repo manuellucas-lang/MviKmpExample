@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -42,6 +43,7 @@ fun PullToRefreshContainer(
     val restPx = with(density) { PullRestDistance.toPx() }
 
     var pullPx by remember { mutableFloatStateOf(0f) }
+    var refreshTriggered by remember { mutableStateOf(false) }
     val currentOnRefresh by rememberUpdatedState(onRefresh)
     val currentIsRefreshing by rememberUpdatedState(isRefreshing)
 
@@ -72,13 +74,18 @@ fun PullToRefreshContainer(
                 }
                 val delta = ((pullPx + available.y).coerceAtMost(maxPx) - pullPx) * 0.5f
                 if (delta != 0f) pullPx += delta
+
+                if (!currentIsRefreshing && !refreshTriggered && pullPx >= triggerPx) {
+                    refreshTriggered = true
+                    currentOnRefresh()
+                }
+
                 return Offset(0f, available.y)
             }
 
             override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
                 if (!currentIsRefreshing && pullPx > 0f) {
                     if (pullPx >= triggerPx) {
-                        currentOnRefresh()
                         settle(restPx)
                     } else {
                         settle(0f)
@@ -90,7 +97,13 @@ fun PullToRefreshContainer(
     }
 
     LaunchedEffect(currentIsRefreshing) {
-        if (!currentIsRefreshing && pullPx > 0f) settle(0f)
+        if (currentIsRefreshing) {
+            refreshTriggered = true
+            if (pullPx < restPx) settle(restPx)
+        } else {
+            refreshTriggered = false
+            if (pullPx > 0f) settle(0f)
+        }
     }
 
     Box(modifier = modifier.nestedScroll(connection)) {
