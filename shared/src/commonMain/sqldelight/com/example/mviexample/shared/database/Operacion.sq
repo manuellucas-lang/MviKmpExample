@@ -24,6 +24,7 @@ ON CONFLICT(id) DO UPDATE SET
     imagen_url = excluded.imagen_url,
     tipo = excluded.tipo,
     autor = excluded.autor,
+    propia = excluded.propia,
     guardada = excluded.guardada;
 
 setGuardada:
