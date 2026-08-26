@@ -26,12 +26,35 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_guardar_cambios
+import mvikmpexample.composeapp.generated.resources.action_registrar_operacion
+import mvikmpexample.composeapp.generated.resources.editor_actualiza_datos
+import mvikmpexample.composeapp.generated.resources.editor_autor
+import mvikmpexample.composeapp.generated.resources.editor_contenido_field
+import mvikmpexample.composeapp.generated.resources.editor_contenido_hint
+import mvikmpexample.composeapp.generated.resources.editor_contenido_label
+import mvikmpexample.composeapp.generated.resources.editor_desc_preview
+import mvikmpexample.composeapp.generated.resources.editor_editar_operacion
+import mvikmpexample.composeapp.generated.resources.editor_foto_label
+import mvikmpexample.composeapp.generated.resources.editor_imagen_hint
+import mvikmpexample.composeapp.generated.resources.editor_imagen_label
+import mvikmpexample.composeapp.generated.resources.editor_imagen_placeholder
+import mvikmpexample.composeapp.generated.resources.editor_nueva_operacion
+import mvikmpexample.composeapp.generated.resources.editor_registra_nueva
+import mvikmpexample.composeapp.generated.resources.editor_titulo_hint
+import mvikmpexample.composeapp.generated.resources.editor_titulo_label
+import mvikmpexample.composeapp.generated.resources.editor_title_preview
+import mvikmpexample.composeapp.generated.resources.editor_vista_previa_label
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.AppButton
 import com.example.mviexample.designsystem.components.AppTextField
 import com.example.mviexample.designsystem.components.BrandTopBar
 import com.example.mviexample.features.operaciones.components.OperacionCard
 import com.example.mviexample.shared.data.model.Operacion
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OperacionEditorScreen(
     state: OperacionesContract.OperacionesState,
@@ -50,10 +73,10 @@ fun OperacionEditorScreen(
         imagenUrl = imagenUrl.ifBlank { null },
     ) ?: Operacion(
         id = 0,
-        titulo = titulo.ifBlank { "Título de la operación" },
-        descripcion = descripcion.ifBlank { "Aquí aparecerá la vista previa de tu contenido." },
+        titulo = titulo.ifBlank { stringResource(Res.string.editor_title_preview) },
+        descripcion = descripcion.ifBlank { stringResource(Res.string.editor_desc_preview) },
         imagenUrl = imagenUrl.ifBlank { null },
-        autor = "You",
+        autor = stringResource(Res.string.editor_autor),
         propia = true,
     )
 
@@ -61,8 +84,8 @@ fun OperacionEditorScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             BrandTopBar(
-                title = if (editing != null) "Editar operación" else "Nueva operación",
-                subtitle = if (editing != null) "Actualiza los datos" else "Registra una nueva operación",
+                title = if (editing != null) stringResource(Res.string.editor_editar_operacion) else stringResource(Res.string.editor_nueva_operacion),
+                subtitle = if (editing != null) stringResource(Res.string.editor_actualiza_datos) else stringResource(Res.string.editor_registra_nueva),
                 onBack = actions.onCloseEditor,
             )
         },
@@ -80,7 +103,7 @@ fun OperacionEditorScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             ) {
                 Text(
-                    text = "CONTENIDO",
+                    text = stringResource(Res.string.editor_contenido_label),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -89,26 +112,26 @@ fun OperacionEditorScreen(
                     value = titulo,
                     onValueChange = { titulo = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Título",
+                    label = stringResource(Res.string.editor_titulo_label),
                     singleLine = false,
                     minLines = 2,
                     maxLines = 3,
-                    supportingText = "Da a tu operación un título claro",
+                    supportingText = stringResource(Res.string.editor_titulo_hint),
                 )
                 Spacer(Modifier.height(18.dp))
                 AppTextField(
                     value = descripcion,
                     onValueChange = { descripcion = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Contenido",
+                    label = stringResource(Res.string.editor_contenido_field),
                     singleLine = false,
                     minLines = 6,
                     maxLines = 12,
-                    supportingText = "Al menos 3 caracteres",
+                    supportingText = stringResource(Res.string.editor_contenido_hint),
                 )
                 Spacer(Modifier.height(18.dp))
                 Text(
-                    text = "FOTO",
+                    text = stringResource(Res.string.editor_foto_label),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -117,13 +140,13 @@ fun OperacionEditorScreen(
                     value = imagenUrl,
                     onValueChange = { imagenUrl = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "URL de imagen (opcional)",
-                    placeholder = "https://…",
-                    supportingText = "Pega un enlace para adjuntar una imagen a tu operación",
+                    label = stringResource(Res.string.editor_imagen_label),
+                    placeholder = stringResource(Res.string.editor_imagen_placeholder),
+                    supportingText = stringResource(Res.string.editor_imagen_hint),
                 )
                 Spacer(Modifier.height(28.dp))
                 Text(
-                    text = "VISTA PREVIA",
+                    text = stringResource(Res.string.editor_vista_previa_label),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -148,7 +171,7 @@ fun OperacionEditorScreen(
                         .padding(horizontal = 20.dp, vertical = 14.dp),
                 ) {
                     AppButton(
-                        text = if (editing != null) "Guardar cambios" else "Registrar operación",
+                        text = if (editing != null) stringResource(Res.string.action_guardar_cambios) else stringResource(Res.string.action_registrar_operacion),
                         onClick = {
                             actions.onSave(titulo, descripcion, imagenUrl.ifBlank { null })
                         },

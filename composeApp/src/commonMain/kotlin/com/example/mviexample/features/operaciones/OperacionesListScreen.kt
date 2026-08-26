@@ -46,6 +46,33 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_crear_primera_operacion
+import mvikmpexample.composeapp.generated.resources.action_nueva_operacion
+import mvikmpexample.composeapp.generated.resources.action_refrescar
+import mvikmpexample.composeapp.generated.resources.empty_be_first
+import mvikmpexample.composeapp.generated.resources.empty_buy_message
+import mvikmpexample.composeapp.generated.resources.empty_no_match
+import mvikmpexample.composeapp.generated.resources.empty_no_operations
+import mvikmpexample.composeapp.generated.resources.empty_no_purchased
+import mvikmpexample.composeapp.generated.resources.empty_no_results
+import mvikmpexample.composeapp.generated.resources.header_guardadas
+import mvikmpexample.composeapp.generated.resources.header_guardadas_count
+import mvikmpexample.composeapp.generated.resources.header_guardadas_count_one
+import mvikmpexample.composeapp.generated.resources.header_guardadas_hero_label
+import mvikmpexample.composeapp.generated.resources.header_guardadas_subtitle
+import mvikmpexample.composeapp.generated.resources.header_hero_subtitle
+import mvikmpexample.composeapp.generated.resources.header_operaciones
+import mvikmpexample.composeapp.generated.resources.header_operaciones_count
+import mvikmpexample.composeapp.generated.resources.header_operaciones_hero_label
+import mvikmpexample.composeapp.generated.resources.search_limpiar_busqueda
+import mvikmpexample.composeapp.generated.resources.search_placeholder
+import mvikmpexample.composeapp.generated.resources.search_propias
+import mvikmpexample.composeapp.generated.resources.search_todas
+import mvikmpexample.composeapp.generated.resources.tab_guardadas
+import mvikmpexample.composeapp.generated.resources.tab_lista
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.AppTextField
 import com.example.mviexample.designsystem.components.BrandHeader
 import com.example.mviexample.designsystem.components.EmptyState
@@ -59,6 +86,7 @@ import com.example.mviexample.designsystem.theme.BrandGradientEnd
 import com.example.mviexample.designsystem.theme.BrandGradientStart
 import com.example.mviexample.features.operaciones.components.OperacionCard
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OperacionesListScreen(
     state: OperacionesContract.OperacionesState,
@@ -71,11 +99,11 @@ fun OperacionesListScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             BrandHeader(
-                title = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) "Guardadas" else "Operaciones",
+                title = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) stringResource(Res.string.header_guardadas) else stringResource(Res.string.header_operaciones),
                 subtitle = if (state.tab == OperacionesContract.OperacionesTab.Guardadas) {
-                    "${state.guardadasCount} operaciones compradas"
+                    stringResource(Res.string.header_guardadas_count, state.guardadasCount)
                 } else {
-                    "${state.operaciones.size} operaciones · ${state.operaciones.count { it.propia }} tuyas"
+                    "${stringResource(Res.string.header_operaciones_count, state.operaciones.size)} \u00b7 ${state.operaciones.count { it.propia }} tuyas"
                 },
                 action = {
                     val infinite = rememberInfiniteTransition(label = "refreshSpin")
@@ -94,7 +122,7 @@ fun OperacionesListScreen(
                         IconButton(onClick = actions.onRefresh, enabled = !state.isRefreshing) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refrescar",
+                                contentDescription = stringResource(Res.string.action_refrescar),
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.rotateIf(state.isRefreshing, rotation),
                             )
@@ -110,7 +138,7 @@ fun OperacionesListScreen(
                     selected = state.tab == OperacionesContract.OperacionesTab.Lista,
                     onClick = { actions.onTabChange(OperacionesContract.OperacionesTab.Lista) },
                     icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                    label = { Text("Lista") },
+                    label = { Text(stringResource(Res.string.tab_lista)) },
                 )
                 NavigationBarItem(
                     selected = state.tab == OperacionesContract.OperacionesTab.Guardadas,
@@ -118,7 +146,7 @@ fun OperacionesListScreen(
                     icon = {
                         GooglePayMark(modifier = Modifier.height(16.dp))
                     },
-                    label = { Text("Guardadas") },
+                    label = { Text(stringResource(Res.string.tab_guardadas)) },
                 )
             }
         },
@@ -127,7 +155,7 @@ fun OperacionesListScreen(
                 ExtendedFloatingActionButton(
                     onClick = actions.onOpenCreate,
                     icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                    text = { Text("Nueva operación") },
+                    text = { Text(stringResource(Res.string.action_nueva_operacion)) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(16.dp),
@@ -148,14 +176,14 @@ fun OperacionesListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                placeholder = "Buscar operaciones o autores…",
+                placeholder = stringResource(Res.string.search_placeholder),
                 leadingIcon = Icons.Default.Search,
                 trailingIcon = if (state.query.isNotEmpty()) {
                     {
                         IconButton(onClick = { actions.onQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Limpiar búsqueda",
+                                contentDescription = stringResource(Res.string.search_limpiar_busqueda),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -175,13 +203,13 @@ fun OperacionesListScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     FilterPill(
-                        text = "Todas",
+                        text = stringResource(Res.string.search_todas),
                         count = state.operaciones.size,
                         selected = state.filtro == OperacionesContract.OperacionFiltro.Todas,
                         onClick = { actions.onFilterChange(OperacionesContract.OperacionFiltro.Todas) },
                     )
                     FilterPill(
-                        text = "Propias",
+                        text = stringResource(Res.string.search_propias),
                         count = state.operaciones.count { it.propia },
                         selected = state.filtro == OperacionesContract.OperacionFiltro.Propias,
                         onClick = { actions.onFilterChange(OperacionesContract.OperacionFiltro.Propias) },
@@ -230,19 +258,19 @@ fun OperacionesListScreen(
                                 else -> Icons.Default.SearchOff
                             },
                             title = when {
-                                isSavedTab -> "No hay operaciones compradas"
-                                state.operaciones.isEmpty() -> "No hay operaciones todavía"
-                                else -> "Sin resultados"
+                                isSavedTab -> stringResource(Res.string.empty_no_purchased)
+                                state.operaciones.isEmpty() -> stringResource(Res.string.empty_no_operations)
+                                else -> stringResource(Res.string.empty_no_results)
                             },
                             message = when {
-                                isSavedTab -> "Compra operaciones con Google Pay y aparecerán aquí."
-                                state.operaciones.isEmpty() -> "Sé el primero en registrar una operación."
-                                else -> "Nada coincide con “${state.query}”. Prueba con otra búsqueda o filtro."
+                                isSavedTab -> stringResource(Res.string.empty_buy_message)
+                                state.operaciones.isEmpty() -> stringResource(Res.string.empty_be_first)
+                                else -> stringResource(Res.string.empty_no_match, state.query)
                             },
                             modifier = Modifier.align(Alignment.Center),
                             actionLabel = when {
                                 isSavedTab -> null
-                                state.operaciones.isEmpty() -> "Crear tu primera operación"
+                                state.operaciones.isEmpty() -> stringResource(Res.string.action_crear_primera_operacion)
                                 else -> null
                             },
                             onAction = if (!isSavedTab && state.operaciones.isEmpty()) actions.onOpenCreate else null,
@@ -293,6 +321,7 @@ fun OperacionesListScreen(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun OperacionesHero(
     total: Int,
@@ -309,19 +338,19 @@ private fun OperacionesHero(
             .padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
         Text(
-            text = "OPERACIONES",
+            text = stringResource(Res.string.header_operaciones_hero_label),
             style = MaterialTheme.typography.labelSmall,
             color = Color.White.copy(alpha = 0.7f),
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "$total operaciones",
+            text = stringResource(Res.string.header_operaciones_count, total),
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "$conFotos con foto · $propias creadas por ti",
+            text = stringResource(Res.string.header_hero_subtitle, conFotos, propias),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(alpha = 0.85f),
             maxLines = 1,
@@ -330,6 +359,7 @@ private fun OperacionesHero(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun GuardadasHero(
     guardadasCount: Int,
@@ -344,19 +374,19 @@ private fun GuardadasHero(
             .padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
         Text(
-            text = "GUARDADAS",
+            text = stringResource(Res.string.header_guardadas_hero_label),
             style = MaterialTheme.typography.labelSmall,
             color = Color.White.copy(alpha = 0.7f),
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = if (guardadasCount == 1) "1 operación comprada" else "$guardadasCount operaciones compradas",
+            text = if (guardadasCount == 1) stringResource(Res.string.header_guardadas_count_one) else stringResource(Res.string.header_guardadas_count, guardadasCount),
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Tus operaciones pagadas con Google Pay.",
+            text = stringResource(Res.string.header_guardadas_subtitle),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(alpha = 0.85f),
             maxLines = 1,

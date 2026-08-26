@@ -36,6 +36,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_comprada_con
+import mvikmpexample.composeapp.generated.resources.action_editar
+import mvikmpexample.composeapp.generated.resources.action_eliminar
+import mvikmpexample.composeapp.generated.resources.action_pagar
+import mvikmpexample.composeapp.generated.resources.detail_anonimo
+import mvikmpexample.composeapp.generated.resources.detail_autor
+import mvikmpexample.composeapp.generated.resources.detail_operacion_id
+import mvikmpexample.composeapp.generated.resources.detail_tuya
+import mvikmpexample.composeapp.generated.resources.detail_volver
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.AppButton
 import com.example.mviexample.designsystem.components.AppButtonStyle
 import com.example.mviexample.designsystem.components.AppIconButton
@@ -47,6 +59,7 @@ import com.example.mviexample.designsystem.components.PostImage
 import com.example.mviexample.features.payments.formatEuros
 import com.example.mviexample.features.payments.operacionPrecio
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OperacionDetailScreen(
     state: OperacionesContract.OperacionesState,
@@ -85,7 +98,7 @@ fun OperacionDetailScreen(
                     containerColor = postScrim,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.detail_volver))
                 }
                 Surface(
                     color = postScrim,
@@ -112,7 +125,7 @@ fun OperacionDetailScreen(
                 }
                 if (operacion.propia) {
                     BrandBadge(
-                        text = "Tuya",
+                        text = stringResource(Res.string.detail_tuya),
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(20.dp),
@@ -129,7 +142,7 @@ fun OperacionDetailScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             ) {
                 Text(
-                    text = "OPERACIÓN #${operacion.id}",
+                    text = stringResource(Res.string.detail_operacion_id, operacion.id),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -154,14 +167,14 @@ fun OperacionDetailScreen(
                     Spacer(Modifier.size(12.dp))
                     Column {
                         Text(
-                            text = operacion.autor ?: "Anónimo",
+                            text = operacion.autor ?: stringResource(Res.string.detail_anonimo),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            text = "Autor",
+                            text = stringResource(Res.string.detail_autor),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -192,13 +205,13 @@ fun OperacionDetailScreen(
                         GooglePayButton(
                             onClick = {},
                             enabled = false,
-                            label = "Comprada con",
+                            label = stringResource(Res.string.action_comprada_con),
                             modifier = Modifier.fillMaxWidth(),
                         )
                     } else {
                         GooglePayButton(
                             onClick = { actions.onBuy(operacion) },
-                            label = "Pagar",
+                            label = stringResource(Res.string.action_pagar),
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -206,7 +219,7 @@ fun OperacionDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         AppButton(
-                            text = "Editar",
+                            text = stringResource(Res.string.action_editar),
                             onClick = { actions.onOpenEdit(operacion) },
                             style = AppButtonStyle.Outlined,
                             modifier = Modifier.weight(1f),
@@ -219,7 +232,7 @@ fun OperacionDetailScreen(
                             },
                         )
                         AppButton(
-                            text = "Eliminar",
+                            text = stringResource(Res.string.action_eliminar),
                             onClick = { actions.onRequestDelete(operacion) },
                             style = AppButtonStyle.Error,
                             modifier = Modifier.weight(1f),

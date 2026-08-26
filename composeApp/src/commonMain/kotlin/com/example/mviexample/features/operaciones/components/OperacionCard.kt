@@ -38,6 +38,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_ver_mas
+import mvikmpexample.composeapp.generated.resources.card_anonimo
+import mvikmpexample.composeapp.generated.resources.card_editar_operacion
+import mvikmpexample.composeapp.generated.resources.card_eliminar_operacion
+import mvikmpexample.composeapp.generated.resources.card_operacion_id
+import mvikmpexample.composeapp.generated.resources.card_tuya
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.BrandBadge
 import com.example.mviexample.designsystem.components.GooglePayIconButton
 import com.example.mviexample.designsystem.components.GooglePayPriceTag
@@ -48,6 +57,7 @@ import com.example.mviexample.features.payments.formatEuros
 import com.example.mviexample.features.payments.operacionPrecio
 import com.example.mviexample.shared.data.model.Operacion
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OperacionCard(
     operacion: Operacion,
@@ -85,20 +95,20 @@ fun OperacionCard(
                 Spacer(Modifier.size(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = operacion.autor ?: "Anónimo",
+                        text = operacion.autor ?: stringResource(Res.string.card_anonimo),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = "Operación #${operacion.id}",
+                        text = stringResource(Res.string.card_operacion_id, operacion.id),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 if (operacion.propia) {
-                    BrandBadge(text = "Tuya")
+                    BrandBadge(text = stringResource(Res.string.card_tuya))
                 }
             }
 
@@ -139,7 +149,7 @@ fun OperacionCard(
                 Spacer(Modifier.height(12.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Ver más",
+                        text = stringResource(Res.string.action_ver_mas),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -159,7 +169,7 @@ fun OperacionCard(
                     Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar operación",
+                        contentDescription = stringResource(Res.string.card_editar_operacion),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
@@ -170,7 +180,7 @@ fun OperacionCard(
                     Spacer(Modifier.size(4.dp))
                     Icon(
                         imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Eliminar operación",
+                        contentDescription = stringResource(Res.string.card_eliminar_operacion),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))

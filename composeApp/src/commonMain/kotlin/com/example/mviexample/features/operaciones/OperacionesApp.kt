@@ -15,6 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.dialog_delete_cancel
+import mvikmpexample.composeapp.generated.resources.dialog_delete_confirm
+import mvikmpexample.composeapp.generated.resources.dialog_delete_message
+import mvikmpexample.composeapp.generated.resources.dialog_delete_title
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.ConfirmDialog
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesEffect
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesIntent
@@ -57,6 +64,7 @@ data class OperacionesActions(
 
 private val paymentRequestBuilder = MockGooglePayGateway(processingDelayMillis = 0L)
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OperacionesApp(
     darkTheme: Boolean = false,
@@ -107,10 +115,10 @@ fun OperacionesApp(
 
     state.deleteTarget?.let { target ->
         ConfirmDialog(
-            title = "¿Eliminar operación?",
-            message = "“${target.titulo.take(60)}${if (target.titulo.length > 60) "…" else ""}” se eliminará permanentemente.",
-            confirmLabel = "Eliminar",
-            dismissLabel = "Cancelar",
+            title = stringResource(Res.string.dialog_delete_title),
+            message = stringResource(Res.string.dialog_delete_message, target.titulo.take(60) + if (target.titulo.length > 60) "\u2026" else ""),
+            confirmLabel = stringResource(Res.string.dialog_delete_confirm),
+            dismissLabel = stringResource(Res.string.dialog_delete_cancel),
             destructive = true,
             onConfirm = { viewModel.onIntent(OperacionesIntent.ConfirmarBorrado) },
             onDismiss = { viewModel.onIntent(OperacionesIntent.DescartarBorrado) },
