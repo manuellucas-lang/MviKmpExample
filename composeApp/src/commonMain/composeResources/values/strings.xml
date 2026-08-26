@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tabs -->
+    <string name="tab_lista">Lista</string>
+    <string name="tab_guardadas">Guardadas</string>
+
+    <!-- Headers -->
+    <string name="header_operaciones">Operaciones</string>
+    <string name="header_guardadas">Guardadas</string>
+    <string name="header_operaciones_count">%d operaciones</string>
+    <string name="header_guardadas_count_one">1 operación comprada</string>
+    <string name="header_guardadas_count">%d operaciones compradas</string>
+    <string name="header_guardadas_subtitle">Tus operaciones pagadas con Google Pay.</string>
+    <string name="header_operaciones_hero_label">OPERACIONES</string>
+    <string name="header_guardadas_hero_label">GUARDADAS</string>
+    <string name="header_hero_subtitle">%d con foto \u00b7 %d creadas por ti</string>
+
+    <!-- Actions -->
+    <string name="action_nueva_operacion">Nueva operación</string>
+    <string name="action_refrescar">Refrescar</string>
+    <string name="action_editar">Editar</string>
+    <string name="action_eliminar">Eliminar</string>
+    <string name="action_cancelar">Cancelar</string>
+    <string name="action_pagar">Pagar</string>
+    <string name="action_comprada_con">Comprada con</string>
+    <string name="action_ver_mas">Ver más</string>
+    <string name="action_crear_primera_operacion">Crear tu primera operación</string>
+    <string name="action_guardar_cambios">Guardar cambios</string>
+    <string name="action_registrar_operacion">Registrar operación</string>
+    <string name="action_try_again">Try again</string>
+
+    <!-- Search / Filter -->
+    <string name="search_placeholder">Buscar operaciones o autores\u2026</string>
+    <string name="search_limpiar_busqueda">Limpiar búsqueda</string>
+    <string name="search_todas">Todas</string>
+    <string name="search_propias">Propias</string>
+
+    <!-- Empty States -->
+    <string name="empty_no_purchased">No hay operaciones compradas</string>
+    <string name="empty_no_operations">No hay operaciones todavía</string>
+    <string name="empty_no_results">Sin resultados</string>
+    <string name="empty_buy_message">Compra operaciones con Google Pay y aparecerán aquí.</string>
+    <string name="empty_be_first">Sé el primero en registrar una operación.</string>
+    <string name="empty_no_match">Nada coincide con \u201c%1$s\u201d. Prueba con otra búsqueda o filtro.</string>
+    <string name="empty_something_wrong">Something went wrong</string>
+
+    <!-- Editor Screen -->
+    <string name="editor_title_preview">Título de la operación</string>
+    <string name="editor_desc_preview">Aquí aparecerá la vista previa de tu contenido.</string>
+    <string name="editor_editar_operacion">Editar operación</string>
+    <string name="editor_nueva_operacion">Nueva operación</string>
+    <string name="editor_actualiza_datos">Actualiza los datos</string>
+    <string name="editor_registra_nueva">Registra una nueva operación</string>
+    <string name="editor_contenido_label">CONTENIDO</string>
+    <string name="editor_titulo_label">Título</string>
+    <string name="editor_titulo_hint">Da a tu operación un título claro</string>
+    <string name="editor_contenido_field">Contenido</string>
+    <string name="editor_contenido_hint">Al menos 3 caracteres</string>
+    <string name="editor_foto_label">FOTO</string>
+    <string name="editor_imagen_label">URL de imagen (opcional)</string>
+    <string name="editor_imagen_placeholder">https://\u2026</string>
+    <string name="editor_imagen_hint">Pega un enlace para adjuntar una imagen a tu operación</string>
+    <string name="editor_vista_previa_label">VISTA PREVIA</string>
+    <string name="editor_autor">You</string>
+
+    <!-- Detail Screen -->
+    <string name="detail_volver">Volver</string>
+    <string name="detail_tuya">Tuya</string>
+    <string name="detail_operacion_id">OPERACIÓN #%1$d</string>
+    <string name="detail_anonimo">Anónimo</string>
+    <string name="detail_autor">Autor</string>
+
+    <!-- Card -->
+    <string name="card_anonimo">Anónimo</string>
+    <string name="card_operacion_id">Operación #%1$d</string>
+    <string name="card_tuya">Tuya</string>
+    <string name="card_editar_operacion">Editar operación</string>
+    <string name="card_eliminar_operacion">Eliminar operación</string>
+
+    <!-- Delete Dialog -->
+    <string name="dialog_delete_title">¿Eliminar operación?</string>
+    <string name="dialog_delete_message">\u201c%1$s\u201d se eliminará permanentemente.</string>
+    <string name="dialog_delete_confirm">Eliminar</string>
+    <string name="dialog_delete_cancel">Cancelar</string>
+
+    <!-- ViewModel Messages -->
+    <string name="msg_no_connection">Sin conexión — mostrando operaciones en caché</string>
+    <string name="msg_title_required">El título es obligatorio</string>
+    <string name="msg_content_short">El contenido es demasiado corto</string>
+    <string name="msg_operation_created">Operación creada</string>
+    <string name="msg_operation_updated">Operación actualizada</string>
+    <string name="msg_already_purchased">Esta operación ya está comprada</string>
+    <string name="msg_payment_completed">Pago completado · Operacion guardada</string>
+    <string name="msg_payment_save_error">El pago se procesó pero no se pudo guardar: %1$s</string>
+    <string name="msg_payment_cancelled">Pago cancelado</string>
+    <string name="msg_save_error">Error al guardar: %1$s</string>
+    <string name="msg_operation_deleted">Operación eliminada</string>
+    <string name="msg_delete_error">Error al eliminar: %1$s</string>
+    <string name="msg_network_error">No se pudieron cargar las operaciones. Comprueba tu conexión.</string>
+    <string name="msg_network_error_detail">Error de red: %1$s</string>
+    <string name="msg_payment_error">Error de pago: %1$s</string>
+    <string name="msg_unknown">desconocido</string>
+    <string name="msg_network_short">error de red</string>
+
+    <!-- Google Pay Sheet -->
+    <string name="gpay_test_environment">Entorno de pruebas (mock)</string>
+    <string name="gpay_operacion_id">Operación #%1$d</string>
+    <string name="gpay_processing">Procesando pago\u2026</string>
+    <string name="gpay_simulated">Pago simulado \u00b7 no se realizará ningún cargo real</string>
+
+    <!-- Theme Toggle -->
+    <string name="theme_switch_light">Switch to light theme</string>
+    <string name="theme_switch_dark">Switch to dark theme</string>
+</resources>

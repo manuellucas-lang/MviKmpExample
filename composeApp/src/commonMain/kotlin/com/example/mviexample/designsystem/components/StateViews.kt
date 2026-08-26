@@ -37,6 +37,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_try_again
+import mvikmpexample.composeapp.generated.resources.empty_something_wrong
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun EmptyState(
@@ -100,6 +105,7 @@ fun EmptyState(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ErrorState(
     message: String,
@@ -130,7 +136,7 @@ fun ErrorState(
         }
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "Something went wrong",
+            text = stringResource(Res.string.empty_something_wrong),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -144,7 +150,7 @@ fun ErrorState(
         )
         Spacer(Modifier.height(24.dp))
         AppButton(
-            text = "Try again",
+            text = stringResource(Res.string.action_try_again),
             onClick = onRetry,
             leadingIcon = {
                 Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))

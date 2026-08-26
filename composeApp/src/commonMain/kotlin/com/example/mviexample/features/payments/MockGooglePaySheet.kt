@@ -36,11 +36,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_pagar
+import mvikmpexample.composeapp.generated.resources.gpay_operacion_id
+import mvikmpexample.composeapp.generated.resources.gpay_processing
+import mvikmpexample.composeapp.generated.resources.gpay_simulated
+import mvikmpexample.composeapp.generated.resources.gpay_test_environment
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import com.example.mviexample.designsystem.components.GooglePayButton
 import com.example.mviexample.designsystem.components.GooglePayMark
 import com.example.mviexample.shared.data.model.Operacion
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun MockGooglePaySheet(
     operacion: Operacion,
@@ -67,7 +75,7 @@ fun MockGooglePaySheet(
                 GooglePayMark(modifier = Modifier.height(24.dp))
             }
             Text(
-                text = "Entorno de pruebas (mock)",
+                text = stringResource(Res.string.gpay_test_environment),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 2.dp),
@@ -90,7 +98,7 @@ fun MockGooglePaySheet(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = "Operación #${operacion.id}",
+                        text = stringResource(Res.string.gpay_operacion_id, operacion.id),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -179,7 +187,7 @@ fun MockGooglePaySheet(
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Procesando pago…",
+                        text = stringResource(Res.string.gpay_processing),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -188,7 +196,7 @@ fun MockGooglePaySheet(
             } else {
                 GooglePayButton(
                     onClick = onPay,
-                    label = "Pagar",
+                    label = stringResource(Res.string.action_pagar),
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -204,7 +212,7 @@ fun MockGooglePaySheet(
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "Pago simulado · no se realizará ningún cargo real",
+                    text = stringResource(Res.string.gpay_simulated),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

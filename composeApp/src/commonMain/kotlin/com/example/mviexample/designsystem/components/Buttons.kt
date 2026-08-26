@@ -24,6 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.theme_switch_dark
+import mvikmpexample.composeapp.generated.resources.theme_switch_light
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
 enum class AppButtonStyle {
     Primary,
@@ -144,6 +149,7 @@ fun AppIconButton(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ThemeToggleButton(
     darkTheme: Boolean,
@@ -158,7 +164,7 @@ fun ThemeToggleButton(
     ) {
         Icon(
             imageVector = if (darkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-            contentDescription = if (darkTheme) "Switch to light theme" else "Switch to dark theme",
+            contentDescription = if (darkTheme) stringResource(Res.string.theme_switch_light) else stringResource(Res.string.theme_switch_dark),
         )
     }
 }
