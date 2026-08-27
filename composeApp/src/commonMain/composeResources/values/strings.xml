@@ -7,13 +7,13 @@
     <!-- Headers -->
     <string name="header_operaciones">Operaciones</string>
     <string name="header_guardadas">Guardadas</string>
-    <string name="header_operaciones_count">%d operaciones</string>
+    <string name="header_operaciones_count">%1$d operaciones</string>
     <string name="header_guardadas_count_one">1 operación comprada</string>
-    <string name="header_guardadas_count">%d operaciones compradas</string>
+    <string name="header_guardadas_count">%1$d operaciones compradas</string>
     <string name="header_guardadas_subtitle">Tus operaciones pagadas con Google Pay.</string>
     <string name="header_operaciones_hero_label">OPERACIONES</string>
     <string name="header_guardadas_hero_label">GUARDADAS</string>
-    <string name="header_hero_subtitle">%d con foto \u00b7 %d creadas por ti</string>
+    <string name="header_hero_subtitle">%1$d con foto \u00b7 %2$d creadas por ti</string>
 
     <!-- Actions -->
     <string name="action_nueva_operacion">Nueva operación</string>
