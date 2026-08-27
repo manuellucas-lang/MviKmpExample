@@ -31,6 +31,14 @@ class OperacionesRepositoryImpl(
                 .associate { it.id to true }
             val remote = api.getOperaciones().map { it.toModel() }
             queries.transaction {
+                val remoteIds = remote.map { it.id }.toSet()
+                // Remove local rows that no longer exist on the server, so deletions
+                // performed on another platform propagate on the next refresh.
+                queries.selectAll().executeAsList().forEach { local ->
+                    if (local.id !in remoteIds) {
+                        queries.deleteById(local.id)
+                    }
+                }
                 remote.forEach { operacion ->
                     val isOwn = existingPropia[operacion.id] == true || operacion.autor == AUTOR_PROPIO
                     operacion.copy(propia = isOwn).upsert()
