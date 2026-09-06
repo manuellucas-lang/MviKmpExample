@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -44,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import mvikmpexample.composeapp.generated.resources.Res
@@ -158,7 +158,7 @@ fun OperacionesListScreen(
                     text = { Text(stringResource(Res.string.action_nueva_operacion)) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RectangleShape,
                 )
             }
         },
@@ -333,7 +333,7 @@ private fun OperacionesHero(
             .fillMaxWidth()
             .background(
                 brush = Brush.horizontalGradient(listOf(BrandGradientStart, BrandGradientEnd)),
-                shape = RoundedCornerShape(20.dp),
+                shape = RectangleShape,
             )
             .padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
@@ -369,7 +369,7 @@ private fun GuardadasHero(
             .fillMaxWidth()
             .background(
                 brush = Brush.horizontalGradient(listOf(BrandGradientStart, BrandGradientEnd)),
-                shape = RoundedCornerShape(20.dp),
+                shape = RectangleShape,
             )
             .padding(horizontal = 20.dp, vertical = 22.dp),
     ) {

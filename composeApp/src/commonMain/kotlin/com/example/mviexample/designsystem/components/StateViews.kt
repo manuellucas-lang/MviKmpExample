@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -188,7 +190,7 @@ fun shimmerBrush(showShimmer: Boolean = true): Brush {
 @Composable
 fun SkeletonBox(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    shape: Shape = RoundedCornerShape(8.dp),
 ) {
     Box(
         modifier = modifier.background(brush = shimmerBrush(), shape = shape),
@@ -202,7 +204,7 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(20.dp),
+                shape = RectangleShape,
             )
             .padding(16.dp),
     ) {
@@ -222,6 +224,6 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(8.dp))
         SkeletonBox(Modifier.fillMaxWidth(0.6f).height(14.dp))
         Spacer(Modifier.height(20.dp))
-        SkeletonBox(Modifier.fillMaxWidth().height(180.dp), RoundedCornerShape(14.dp))
+        SkeletonBox(Modifier.fillMaxWidth().height(180.dp), RectangleShape)
     }
 }

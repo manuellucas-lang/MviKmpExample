@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun OperacionCard(
             .fillMaxWidth()
             .alpha(if (isRefreshing) 0.55f else 1f)
             .clickable(enabled = !isRefreshing, onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
+        shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -117,7 +118,7 @@ fun OperacionCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(190.dp)
-                    .clip(RoundedCornerShape(0.dp)),
+                    .clip(RectangleShape),
             )
 
             Column(modifier = Modifier.padding(16.dp)) {
