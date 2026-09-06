@@ -20,6 +20,7 @@ import mvikmpexample.composeapp.generated.resources.msg_title_required
 import mvikmpexample.composeapp.generated.resources.msg_unknown
 import mvikmpexample.composeapp.generated.resources.msg_network_error
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesEffect
 import com.example.mviexample.features.operaciones.OperacionesContract.OperacionesIntent
@@ -33,11 +34,27 @@ import com.example.mviexample.shared.data.model.Operacion
 import com.example.mviexample.shared.util.currentTimeMillis
 import kotlinx.coroutines.delay
 
+/**
+ * Resolves a string resource to its localized text.
+ *
+ * Injected into [OperacionesViewModel] instead of calling `getString(...)` directly,
+ * because `getString` requires a platform resource environment that is not available
+ * in plain JVM unit tests. Production uses the default (wraps `getString`); tests
+ * inject a deterministic fake. Keeps ViewModel tests in `commonTest` so they run on
+ * both Android and iOS.
+ */
+fun interface MessageProvider {
+    suspend operator fun invoke(resource: StringResource, vararg formatArgs: Any): String
+}
+
 @OptIn(ExperimentalResourceApi::class)
 class OperacionesViewModel(
     private val repository: OperacionesRepository,
     private val googlePayGateway: MockGooglePayGateway = MockGooglePayGateway(),
     private val minRefreshFeedbackMillis: Long = 800L,
+    private val messageProvider: MessageProvider = MessageProvider { resource, formatArgs ->
+        getString(resource, *formatArgs)
+    },
 ) : MviViewModel<OperacionesState, OperacionesIntent, OperacionesEffect>(
     initialState = OperacionesState(),
 ) {
@@ -101,10 +118,10 @@ class OperacionesViewModel(
                 )
             }
             if (result.fromCache) {
-                emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_no_connection)))
+                emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_no_connection)))
             }
         } catch (e: Exception) {
-            val errorMsg = getString(Res.string.msg_network_error)
+            val errorMsg = messageProvider(Res.string.msg_network_error)
             setState {
                 it.copy(
                     isLoading = false,
@@ -112,7 +129,7 @@ class OperacionesViewModel(
                     error = errorMsg,
                 )
             }
-            val detailMsg = getString(Res.string.msg_network_error_detail, e.message ?: getString(Res.string.msg_unknown))
+            val detailMsg = messageProvider(Res.string.msg_network_error_detail, e.message ?: messageProvider(Res.string.msg_unknown))
             emitEffect(OperacionesEffect.MostrarMensaje(detailMsg))
         }
     }
@@ -121,18 +138,18 @@ class OperacionesViewModel(
         val titulo = rawTitulo.trim()
         val descripcion = rawDescripcion.trim()
         if (titulo.isEmpty()) {
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_title_required)))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_title_required)))
             return
         }
         if (descripcion.length < 3) {
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_content_short)))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_content_short)))
             return
         }
         val editing = state.value.editorOperacion
         setState { it.copy(isSaving = true) }
         try {
             if (editing == null) {
-                val creada = repository.crearOperacion(titulo, descripcion, imagenUrl, tipo = null, autor = getString(Res.string.editor_autor))
+                val creada = repository.crearOperacion(titulo, descripcion, imagenUrl, tipo = null, autor = messageProvider(Res.string.editor_autor))
                 setState { current ->
                     current.copy(
                         operaciones = (listOf(creada) + current.operaciones.filterNot { it.id == creada.id })
@@ -141,9 +158,9 @@ class OperacionesViewModel(
                         isSaving = false,
                     )
                 }
-                emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_operation_created)))
+                emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_operation_created)))
             } else {
-                val actualizada = repository.actualizarOperacion(editing.id, titulo, descripcion, imagenUrl, tipo = null, autor = getString(Res.string.editor_autor))
+                val actualizada = repository.actualizarOperacion(editing.id, titulo, descripcion, imagenUrl, tipo = null, autor = messageProvider(Res.string.editor_autor))
                 setState { current ->
                     current.copy(
                         operaciones = current.operaciones.map { if (it.id == actualizada.id) actualizada else it },
@@ -152,17 +169,17 @@ class OperacionesViewModel(
                         isSaving = false,
                     )
                 }
-                emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_operation_updated)))
+                emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_operation_updated)))
             }
         } catch (e: Exception) {
             setState { it.copy(isSaving = false) }
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_save_error, e.message ?: getString(Res.string.msg_network_short))))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_save_error, e.message ?: messageProvider(Res.string.msg_network_short))))
         }
     }
 
     private suspend fun iniciarPago(operacion: Operacion) {
         if (operacion.guardada) {
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_already_purchased)))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_already_purchased)))
             return
         }
         setState { it.copy(paymentTarget = operacion, isProcessingPayment = false) }
@@ -197,12 +214,12 @@ class OperacionesViewModel(
                             transactionId = result.transactionId,
                         ),
                     )
-                    emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_payment_completed)))
+                    emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_payment_completed)))
                 } catch (e: Exception) {
                     setState { it.copy(isProcessingPayment = false) }
                     emitEffect(
                         OperacionesEffect.MostrarMensaje(
-                            getString(Res.string.msg_payment_save_error, e.message ?: getString(Res.string.msg_unknown)),
+                            messageProvider(Res.string.msg_payment_save_error, e.message ?: messageProvider(Res.string.msg_unknown)),
                         ),
                     )
                 }
@@ -210,12 +227,12 @@ class OperacionesViewModel(
 
             is GooglePayResult.Cancelled -> {
                 setState { it.copy(paymentTarget = null, isProcessingPayment = false) }
-                emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_payment_cancelled)))
+                emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_payment_cancelled)))
             }
 
             is GooglePayResult.Error -> {
                 setState { it.copy(isProcessingPayment = false) }
-                emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_payment_error, result.mensaje)))
+                emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_payment_error, result.mensaje)))
             }
         }
     }
@@ -238,10 +255,10 @@ class OperacionesViewModel(
                     isDeleting = false,
                 )
             }
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_operation_deleted)))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_operation_deleted)))
         } catch (e: Exception) {
             setState { it.copy(isDeleting = false, deleteTarget = null) }
-            emitEffect(OperacionesEffect.MostrarMensaje(getString(Res.string.msg_delete_error, e.message ?: getString(Res.string.msg_network_short))))
+            emitEffect(OperacionesEffect.MostrarMensaje(messageProvider(Res.string.msg_delete_error, e.message ?: messageProvider(Res.string.msg_network_short))))
         }
     }
 }

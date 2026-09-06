@@ -39,6 +39,8 @@ class OperacionesViewModelTest {
 
     private val sampleOperacion = Operacion(id = 1, titulo = "Titulo", descripcion = "Cuerpo", autor = "Leanne")
 
+    private val fakeMessageProvider = MessageProvider { _, _ -> "Mensaje de prueba" }
+
     private fun createViewModel(
         result: OperacionesResult = OperacionesResult(emptyList(), fromCache = false),
         onCreate: (Operacion) -> Operacion = { it },
@@ -46,6 +48,7 @@ class OperacionesViewModelTest {
     ) = OperacionesViewModel(
         repository = FakeOperacionesRepository(result, onCreate, onSetGuardada),
         minRefreshFeedbackMillis = 0L,
+        messageProvider = fakeMessageProvider,
     )
 
     @Test
@@ -82,7 +85,11 @@ class OperacionesViewModelTest {
 
     @Test
     fun cargarOperaciones_failure_setsErrorAndEmitsEffect() = runTest(dispatcher) {
-        val viewModel = OperacionesViewModel(FailingOperacionesRepository(), minRefreshFeedbackMillis = 0L)
+        val viewModel = OperacionesViewModel(
+            repository = FailingOperacionesRepository(),
+            minRefreshFeedbackMillis = 0L,
+            messageProvider = fakeMessageProvider,
+        )
 
         advanceUntilIdle()
 
@@ -308,7 +315,11 @@ class OperacionesViewModelTest {
 
     @Test
     fun confirmarPago_failure_keepsSheetOpenAndEmitsMessage() = runTest(dispatcher) {
-        val viewModel = OperacionesViewModel(FailingOperacionesRepository(), minRefreshFeedbackMillis = 0L)
+        val viewModel = OperacionesViewModel(
+            repository = FailingOperacionesRepository(),
+            minRefreshFeedbackMillis = 0L,
+            messageProvider = fakeMessageProvider,
+        )
 
         advanceUntilIdle()
         viewModel.onIntent(OperacionesIntent.IniciarPago(sampleOperacion))
