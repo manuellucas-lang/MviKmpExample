@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "511466411717",
+    "project_id": "mvikmpexample",
+    "storage_bucket": "mvikmpexample.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511466411717:android:da3fd2897a955e2aae42ac",
+        "android_client_info": {
+          "package_name": "com.example.mviexample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTR4DJHcB237dQbiKdmxsGZjygyet-qbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
