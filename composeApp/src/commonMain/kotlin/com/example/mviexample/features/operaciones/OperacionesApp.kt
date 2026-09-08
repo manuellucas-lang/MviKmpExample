@@ -69,6 +69,7 @@ private val paymentRequestBuilder = MockGooglePayGateway(processingDelayMillis =
 fun OperacionesApp(
     darkTheme: Boolean = false,
     onToggleTheme: () -> Unit = {},
+    onOpenProfile: () -> Unit = {},
     viewModel: OperacionesViewModel = viewModel { OperacionesViewModel(AppGraph.container.operacionesRepository) },
 ) {
     val state by viewModel.state.collectAsState()
@@ -148,6 +149,7 @@ fun OperacionesApp(
                 snackbarHostState = snackbarHostState,
                 darkTheme = darkTheme,
                 onToggleTheme = onToggleTheme,
+                onOpenProfile = onOpenProfile,
             )
 
             AppScreen.Detail -> OperacionDetailScreen(

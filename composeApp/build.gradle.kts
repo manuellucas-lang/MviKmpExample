@@ -55,6 +55,12 @@ kotlin {
             implementation(platform(libs.firebase.bom.get().toString()))
             implementation(libs.firebase.analytics)
             implementation(libs.firebase.common)
+            implementation(libs.firebase.auth)
+            // Google Sign-In (Credential Manager)
+            implementation(libs.credentials)
+            implementation(libs.credentials.play.services.auth)
+            implementation(libs.googleid)
+            implementation(libs.kotlinx.coroutines.play.services)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

@@ -10,7 +10,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.example.mviexample.data.image.createImageHttpClient
 import com.example.mviexample.designsystem.theme.MviTheme
-import com.example.mviexample.features.operaciones.OperacionesApp
+import com.example.mviexample.features.auth.AuthRoot
 
 @Composable
 fun App() {
@@ -23,7 +23,7 @@ fun App() {
     }
     var darkTheme by rememberSaveable { mutableStateOf(true) }
     MviTheme(darkTheme = darkTheme) {
-        OperacionesApp(
+        AuthRoot(
             darkTheme = darkTheme,
             onToggleTheme = { darkTheme = !darkTheme },
         )

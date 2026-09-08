@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
@@ -173,7 +172,7 @@ fun OperacionCard(
                         contentDescription = stringResource(Res.string.card_editar_operacion),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
+                            .clip(RectangleShape)
                             .clickable(enabled = !isRefreshing, onClick = onEdit)
                             .padding(10.dp)
                             .size(18.dp),
@@ -184,7 +183,7 @@ fun OperacionCard(
                         contentDescription = stringResource(Res.string.card_eliminar_operacion),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
+                            .clip(RectangleShape)
                             .clickable(enabled = !isRefreshing, onClick = onDelete)
                             .padding(10.dp)
                             .size(18.dp),
