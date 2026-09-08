@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -103,7 +103,7 @@ fun OperacionDetailScreen(
                 Surface(
                     color = postScrim,
                     contentColor = Color.White,
-                    shape = RoundedCornerShape(50),
+                    shape = RectangleShape,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .windowInsetsPadding(WindowInsets.statusBars)

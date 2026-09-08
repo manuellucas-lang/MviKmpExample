@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.PostAdd
@@ -66,7 +64,7 @@ fun EmptyState(
                 .size(96.dp)
                 .background(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = CircleShape,
+                    shape = RectangleShape,
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -125,7 +123,7 @@ fun ErrorState(
                 .size(96.dp)
                 .background(
                     color = MaterialTheme.colorScheme.errorContainer,
-                    shape = CircleShape,
+                    shape = RectangleShape,
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -190,7 +188,7 @@ fun shimmerBrush(showShimmer: Boolean = true): Brush {
 @Composable
 fun SkeletonBox(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(8.dp),
+    shape: Shape = RectangleShape,
 ) {
     Box(
         modifier = modifier.background(brush = shimmerBrush(), shape = shape),
@@ -209,7 +207,7 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
             .padding(16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            SkeletonBox(Modifier.size(36.dp), CircleShape)
+            SkeletonBox(Modifier.size(36.dp), RectangleShape)
             Spacer(Modifier.width(12.dp))
             Column {
                 SkeletonBox(Modifier.width(120.dp).height(12.dp))

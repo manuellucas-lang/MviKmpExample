@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +41,7 @@ fun GooglePayButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(24.dp),
+        shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = container,
             contentColor = content,
@@ -71,7 +71,7 @@ fun GooglePayIconButton(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RectangleShape)
             .clickable(
                 enabled = enabled,
                 onClickLabel = contentDescription,
@@ -80,7 +80,7 @@ fun GooglePayIconButton(
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (enabled) 1f else 0.5f),
-                shape = RoundedCornerShape(12.dp),
+                shape = RectangleShape,
             )
             .background(color = MaterialTheme.colorScheme.surface)
             .padding(horizontal = 10.dp, vertical = 7.dp)
@@ -100,7 +100,7 @@ fun PaidWithGooglePayBadge(
         modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(12.dp),
+                shape = RectangleShape,
             )
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,

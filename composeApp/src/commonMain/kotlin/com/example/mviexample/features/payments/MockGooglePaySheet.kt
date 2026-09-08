@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreditCard
@@ -136,7 +135,7 @@ fun MockGooglePaySheet(
                                 .size(34.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = CircleShape,
+                                    shape = RectangleShape,
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {

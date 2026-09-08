@@ -3,10 +3,11 @@ package com.example.mviexample.designsystem.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,7 +51,7 @@ fun AppButton(
     fullWidth: Boolean = true,
     minHeight: Dp = 52.dp,
 ) {
-    val shape = RoundedCornerShape(14.dp)
+    val shape = RectangleShape
     val content: @Composable () -> Unit = {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -80,7 +81,7 @@ fun AppButton(
         AppButtonStyle.Primary -> Button(
             onClick = onClick,
             enabled = enabled && !isLoading,
-            modifier = if (fullWidth) modifier else modifier,
+            modifier = if (fullWidth) modifier.fillMaxWidth() else modifier,
             shape = shape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -92,7 +93,7 @@ fun AppButton(
         AppButtonStyle.Secondary -> Button(
             onClick = onClick,
             enabled = enabled && !isLoading,
-            modifier = modifier,
+            modifier = if (fullWidth) modifier.fillMaxWidth() else modifier,
             shape = shape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -103,7 +104,7 @@ fun AppButton(
         AppButtonStyle.Error -> Button(
             onClick = onClick,
             enabled = enabled && !isLoading,
-            modifier = modifier,
+            modifier = if (fullWidth) modifier.fillMaxWidth() else modifier,
             shape = shape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
@@ -114,7 +115,7 @@ fun AppButton(
         AppButtonStyle.Outlined -> OutlinedButton(
             onClick = onClick,
             enabled = enabled && !isLoading,
-            modifier = modifier,
+            modifier = if (fullWidth) modifier.fillMaxWidth() else modifier,
             shape = shape,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) { content() }
@@ -122,7 +123,7 @@ fun AppButton(
         AppButtonStyle.Ghost -> TextButton(
             onClick = onClick,
             enabled = enabled && !isLoading,
-            modifier = modifier.height(minHeight),
+            modifier = if (fullWidth) modifier.fillMaxWidth() else modifier.height(minHeight),
         ) { content() }
     }
 }
