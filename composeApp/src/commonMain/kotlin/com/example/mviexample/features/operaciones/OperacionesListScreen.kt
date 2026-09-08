@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PostAdd
@@ -47,6 +48,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import mvikmpexample.composeapp.generated.resources.Res
+import mvikmpexample.composeapp.generated.resources.action_abrir_perfil
 import mvikmpexample.composeapp.generated.resources.action_crear_primera_operacion
 import mvikmpexample.composeapp.generated.resources.action_nueva_operacion
 import mvikmpexample.composeapp.generated.resources.action_refrescar
@@ -94,6 +96,7 @@ fun OperacionesListScreen(
     snackbarHostState: SnackbarHostState,
     darkTheme: Boolean = false,
     onToggleTheme: () -> Unit = {},
+    onOpenProfile: () -> Unit = {},
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -114,6 +117,13 @@ fun OperacionesListScreen(
                         label = "refreshAngle",
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onOpenProfile) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = stringResource(Res.string.action_abrir_perfil),
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
                         ThemeToggleButton(
                             darkTheme = darkTheme,
                             onClick = onToggleTheme,

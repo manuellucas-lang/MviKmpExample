@@ -111,4 +111,62 @@
     <!-- Theme Toggle -->
     <string name="theme_switch_light">Switch to light theme</string>
     <string name="theme_switch_dark">Switch to dark theme</string>
+
+    <!-- Auth: Profile -->
+    <string name="profile_title">Tu perfil</string>
+    <string name="action_abrir_perfil">Abrir perfil</string>
+    <string name="auth_uid_label">ID de usuario</string>
+    <string name="auth_provider_label">Proveedores</string>
+    <string name="auth_member_since">Miembro desde</string>
+    <string name="auth_email_verified">Email verificado</string>
+    <string name="auth_email_not_verified">Email sin verificar</string>
+    <string name="auth_verify_email">Verificar email</string>
+    <string name="auth_reset_password">Cambiar contraseña</string>
+    <string name="auth_link_google">Vincular cuenta de Google</string>
+    <string name="auth_sign_out">Cerrar sesión</string>
+    <string name="auth_delete_account">Eliminar cuenta</string>
+    <string name="auth_delete_confirm_title">¿Eliminar cuenta?</string>
+    <string name="auth_delete_confirm_message">Esta acción es permanente y no se puede deshacer.</string>
+    <string name="auth_confirm">Confirmar</string>
+    <string name="auth_cancel">Cancelar</string>
+
+    <!-- Auth: Reauthentication -->
+    <string name="auth_reauth_title">Confirma tu identidad</string>
+    <string name="auth_reauth_message">Introduce tu contraseña para continuar.</string>
+    <string name="auth_reauth_hint">Contraseña</string>
+    <string name="auth_reauth_confirm">Verificar</string>
+
+    <!-- Auth: Login / Sign Up / Reset -->
+    <string name="auth_title">Bienvenido</string>
+    <string name="auth_subtitle">Inicia sesión con tu email o con Google.</string>
+    <string name="auth_email_hint">Email</string>
+    <string name="auth_login_password_hint">Contraseña</string>
+    <string name="auth_confirm_password">Repite la contraseña</string>
+    <string name="auth_google_login">Continuar con Google</string>
+    <string name="auth_toggle_password">Mostrar u ocultar contraseña</string>
+    <string name="login_submit">Iniciar sesión</string>
+    <string name="signup_submit">Crear cuenta</string>
+    <string name="auth_reset_submit">Enviar enlace de recuperación</string>
+    <string name="auth_go_login">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="auth_go_signup">¿No tienes cuenta? Regístrate</string>
+    <string name="auth_go_forgot">¿Olvidaste tu contraseña?</string>
+
+    <!-- Auth: Validation -->
+    <string name="auth_validation_email_required">El email es obligatorio</string>
+    <string name="auth_validation_email_invalid">El email no es válido</string>
+    <string name="auth_validation_password_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="auth_validation_password_mismatch">Las contraseñas no coinciden</string>
+
+    <!-- Auth: ViewModel Messages -->
+    <string name="auth_msg_signed_in">Sesión iniciada</string>
+    <string name="auth_msg_signed_out">Sesión cerrada</string>
+    <string name="auth_msg_email_already_verified">El email ya está verificado</string>
+    <string name="auth_msg_verify_email_sent">Email de verificación enviado</string>
+    <string name="auth_msg_reset_sent">Si existe una cuenta con ese email, recibirás un enlace de recuperación</string>
+    <string name="auth_msg_linked_google">Cuenta de Google vinculada</string>
+    <string name="auth_msg_already_linked">Ya tienes vinculada la cuenta de Google</string>
+    <string name="auth_msg_account_deleted">Cuenta eliminada</string>
+    <string name="auth_msg_reauth_needed_to_delete">Vuelve a iniciar sesión para eliminar tu cuenta</string>
+    <string name="auth_msg_reauth_ok">Identidad confirmada</string>
+    <string name="auth_error_unknown">Error de autenticación</string>
 </resources>
