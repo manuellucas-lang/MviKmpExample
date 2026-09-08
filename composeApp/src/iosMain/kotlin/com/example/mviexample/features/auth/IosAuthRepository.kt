@@ -156,6 +156,3 @@ private fun Map<*, *>?.toAppUser(): AppUser? {
         creationTimestampMillis = (this["createdAt"] as? String)?.toLongOrNull(),
     )
 }
-
-/** Returns the platform-specific [AuthRepository] implementation. */
-actual fun createAuthRepository(): AuthRepository = IosAuthRepository()

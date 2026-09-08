@@ -10,10 +10,11 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.example.mviexample.data.image.createImageHttpClient
 import com.example.mviexample.designsystem.theme.MviTheme
+import com.example.mviexample.features.auth.AuthRepository
 import com.example.mviexample.features.auth.AuthRoot
 
 @Composable
-fun App() {
+fun App(authRepository: AuthRepository) {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {
@@ -24,6 +25,7 @@ fun App() {
     var darkTheme by rememberSaveable { mutableStateOf(true) }
     MviTheme(darkTheme = darkTheme) {
         AuthRoot(
+            authRepository = authRepository,
             darkTheme = darkTheme,
             onToggleTheme = { darkTheme = !darkTheme },
         )

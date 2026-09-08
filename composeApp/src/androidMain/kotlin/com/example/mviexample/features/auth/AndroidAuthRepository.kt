@@ -268,21 +268,3 @@ private fun FirebaseUser.toAppUser(): AppUser = AppUser(
     isAnonymous = isAnonymous,
     creationTimestampMillis = metadata?.creationTimestamp,
 )
-
-/** Provides the [android.app.Application] context through the ambient context holder. */
-actual fun createAuthRepository(): AuthRepository {
-    val context = AuthContextHolder.context
-        ?: error("AuthContextHolder.init(context) must be called before createAuthRepository()")
-    return AndroidAuthRepository(context)
-}
-
-/** Holds the application [Context] so the repository factory needs no constructor args. */
-object AuthContextHolder {
-    @Volatile
-    var context: Context? = null
-        private set
-
-    fun init(context: Context) {
-        this.context = context.applicationContext
-    }
-}
