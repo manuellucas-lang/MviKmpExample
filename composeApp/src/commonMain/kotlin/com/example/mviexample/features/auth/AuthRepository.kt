@@ -44,6 +44,3 @@ interface AuthRepository {
     /** Reloads the current user profile from the server. */
     suspend fun refreshUser(): AuthResult
 }
-
-/** Returns the platform-specific [AuthRepository] implementation. */
-expect fun createAuthRepository(): AuthRepository

@@ -30,9 +30,10 @@ import com.example.mviexample.features.operaciones.OperacionesApp
  */
 @Composable
 fun AuthRoot(
+    authRepository: AuthRepository,
     darkTheme: Boolean,
     onToggleTheme: () -> Unit,
-    viewModel: AuthViewModel = viewModel { AuthViewModel(createAuthRepository()) },
+    viewModel: AuthViewModel = viewModel { AuthViewModel(authRepository) },
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
