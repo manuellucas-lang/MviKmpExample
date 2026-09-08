@@ -56,12 +56,17 @@ MviKmpExample/
 
 ## Server base URL
 
-| Platform      | URL                       |
-|---------------|---------------------------|
-| Android emulator | `http://10.0.2.2:8080` |
-| iOS simulator | `http://localhost:8080`   |
+| Platform             | URL                                    |
+|----------------------|----------------------------------------|
+| Android emulator     | `http://10.0.2.2:8080`                 |
+| Android física (USB) | `http://localhost:8080` (vía `adb reverse`) |
+| iOS simulator        | `http://localhost:8080`                |
 
 Defined per platform in `shared/src/*/data/network/HttpClientFactory.*.kt` (`apiBaseUrl()`).
+
+- `apiBaseUrl()` (Android) detects emulator vs physical device: emulators use `10.0.2.2`, physical devices use `localhost:8080`.
+- **Physical device**: the server is reached over USB — run `adb reverse tcp:8080 tcp:8080` after connecting the phone (re-run it if the device reconnects). No Wi-Fi/firewall setup needed.
+- Debug APKs are **test-only**: install with `adb install -t -r composeApp/build/outputs/apk/debug/composeApp-debug.apk` (use `outputs/`, not `intermediates/`).
 
 ## License
 
